@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="album_cover_size">200dp</dimen>
+    <dimen name="album_items_sides_space">10dp</dimen>
+    <dimen name="album_items_bottom_space">20dp</dimen>
+    <dimen name="top_margin_first_section">50dp</dimen>
+
+</resources>
