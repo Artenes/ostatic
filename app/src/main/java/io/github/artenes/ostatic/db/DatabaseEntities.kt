@@ -53,4 +53,16 @@ data class TopAlbumView(
     var files: Int,
     var position: Int,
     var cover: String?
-)
+) {
+
+    companion object {
+
+        const val NEXT_PAGE_ID = "NEXT_PAGE_ID"
+
+        fun makeNextPageAlbum(name: String = ""): TopAlbumView {
+            return TopAlbumView(NEXT_PAGE_ID, name, "", "", "", 0, 0, "")
+        }
+
+    }
+
+}

@@ -118,10 +118,13 @@ class AlbumListAdapter(val isHighlight: Boolean) : RecyclerView.Adapter<AlbumLis
 
         fun bind(album: TopAlbumView) {
             itemView.findViewById<TextView>(R.id.itemTitle).text = album.name
+            val cover = itemView.findViewById<ImageView>(R.id.itemAlbumCover)
             if (!album.cover.isNullOrEmpty()) {
                 Picasso.get()
                     .load(album.cover)
-                    .into(itemView.findViewById<ImageView>(R.id.itemAlbumCover))
+                    .into(cover)
+            } else {
+                cover.setImageDrawable(ColorDrawable(Color.WHITE))
             }
         }
 
