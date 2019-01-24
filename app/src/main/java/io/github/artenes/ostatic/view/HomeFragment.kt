@@ -8,10 +8,18 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.artenes.ostatic.R
+import io.github.artenes.ostatic.db.ApplicationDatabase
 
 import kotlinx.android.synthetic.main.list.view.*
+import kotlinx.coroutines.*
 
 class HomeFragment : Fragment() {
+
+    val job = Job()
+    val scope = CoroutineScope(Dispatchers.Main + job)
+
+    lateinit var adapter: TopAlbumsAdapter
+    lateinit var db: ApplicationDatabase
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -19,66 +27,89 @@ class HomeFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.list, container, false)
 
-        val adapter = TopAlbumsAdapter()
+        adapter = TopAlbumsAdapter()
         view.mainList.layoutManager = LinearLayoutManager(context)
         view.mainList.adapter = adapter
 
-        val sections = mutableListOf<AlbumSection>()
+        return view
+    }
 
-        val top40 = listOf(
-            Album("Persona 5", "http://66.90.93.122/ost/persona-5/Cover.jpg"),
-            Album("Need for Speed - Most Wanted", "http://66.90.93.122/ost/need-for-speed-most-wanted/3407-yorciclacq.jpg"),
-            Album("Minecraft", "http://66.90.93.122/ost/minecraft/cover.jpg"),
-            Album("Super Mario World Original Soundtrack", "http://66.90.93.122/ost/super-mario-world-original-soundtrack/4955-bsqzsatpcp.jpg"),
-            Album("Super Smash Bros Brawl - Gamerip", "http://66.90.93.122/ost/super-smash-bros-brawl-gamerip/maxresdefault.jpg"),
-            Album("Legend of Zelda, The - Breath of the Wild", "http://66.90.93.122/ost/the-legend-of-zelda-breath-of-the-wild/index.jpg"),
-            Album("Legend of Zelda, The - Ocarina of Time Original Soundtrack", "http://66.90.93.122/ost/legend-of-zelda-ocarina-of-time-original-sound-track/2779-grthilgkiv.jpg"),
-            Album("Super Mario Bros", "http://66.90.93.122/ost/super-mario-bros/index.png"))
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
-        sections.add(AlbumSection("Top 40 soundtracks", "TOP 40 soundtracks for week #3", top40, true))
+        db = ApplicationDatabase.getInstance(requireContext())
+        loadAndBind()
+    }
 
-        val newly = listOf(
-            Album("Need for Speed - Most Wanted", "http://66.90.93.122/ost/need-for-speed-most-wanted/3407-yorciclacq.jpg"),
-            Album("Super Smash Bros Brawl - Gamerip", "http://66.90.93.122/ost/super-smash-bros-brawl-gamerip/maxresdefault.jpg"),
-            Album("Legend of Zelda, The - Ocarina of Time Original Soundtrack", "http://66.90.93.122/ost/legend-of-zelda-ocarina-of-time-original-sound-track/2779-grthilgkiv.jpg"),
-            Album("Persona 5", "http://66.90.93.122/ost/persona-5/Cover.jpg"),
-            Album("Super Mario Bros", "http://66.90.93.122/ost/super-mario-bros/index.png"),
-            Album("Minecraft", "http://66.90.93.122/ost/minecraft/cover.jpg"),
-            Album("Super Mario World Original Soundtrack", "http://66.90.93.122/ost/super-mario-world-original-soundtrack/4955-bsqzsatpcp.jpg"),
-            Album("Legend of Zelda, The - Breath of the Wild", "http://66.90.93.122/ost/the-legend-of-zelda-breath-of-the-wild/index.jpg")
-        )
+    fun loadAndBind() = scope.launch {
+        val view: View = this@HomeFragment.view as View
 
-        sections.add(AlbumSection("Top 100 newly added soundtracks", "Latest songs from our users", newly, false))
+        view.content.visibility = View.GONE
+        view.progress.visibility = View.VISIBLE
 
-        val months = listOf(
-            Album("Super Mario World Original Soundtrack", "http://66.90.93.122/ost/super-mario-world-original-soundtrack/4955-bsqzsatpcp.jpg"),
-            Album("Super Smash Bros Brawl - Gamerip", "http://66.90.93.122/ost/super-smash-bros-brawl-gamerip/maxresdefault.jpg"),
-            Album("Persona 5", "http://66.90.93.122/ost/persona-5/Cover.jpg"),
-            Album("Need for Speed - Most Wanted", "http://66.90.93.122/ost/need-for-speed-most-wanted/3407-yorciclacq.jpg"),
-            Album("Legend of Zelda, The - Breath of the Wild", "http://66.90.93.122/ost/the-legend-of-zelda-breath-of-the-wild/index.jpg"),
-            Album("Minecraft", "http://66.90.93.122/ost/minecraft/cover.jpg"),
-            Album("Super Mario Bros", "http://66.90.93.122/ost/super-mario-bros/index.png"),
-            Album("Legend of Zelda, The - Ocarina of Time Original Soundtrack", "http://66.90.93.122/ost/legend-of-zelda-ocarina-of-time-original-sound-track/2779-grthilgkiv.jpg")
-        )
-
-        sections.add(AlbumSection("Last 6 months top 100 soundtracks", "Most popular from last 6 months", months, false))
-
-        val year = listOf(
-            Album("Super Smash Bros Brawl - Gamerip", "http://66.90.93.122/ost/super-smash-bros-brawl-gamerip/maxresdefault.jpg"),
-            Album("Persona 5", "http://66.90.93.122/ost/persona-5/Cover.jpg"),
-            Album("Super Mario World Original Soundtrack", "http://66.90.93.122/ost/super-mario-world-original-soundtrack/4955-bsqzsatpcp.jpg"),
-            Album("Legend of Zelda, The - Ocarina of Time Original Soundtrack", "http://66.90.93.122/ost/legend-of-zelda-ocarina-of-time-original-sound-track/2779-grthilgkiv.jpg"),
-            Album("Minecraft", "http://66.90.93.122/ost/minecraft/cover.jpg"),
-            Album("Need for Speed - Most Wanted", "http://66.90.93.122/ost/need-for-speed-most-wanted/3407-yorciclacq.jpg"),
-            Album("Legend of Zelda, The - Breath of the Wild", "http://66.90.93.122/ost/the-legend-of-zelda-breath-of-the-wild/index.jpg"),
-            Album("Super Mario Bros", "http://66.90.93.122/ost/super-mario-bros/index.png")
-        )
-
-        sections.add(AlbumSection("All time top 100 soundtracks", "Best game songs of all time", year, false))
+        val sections = makeListOfSections()
 
         adapter.setData(sections)
 
-        return view
+        //delay by 1 second to give time to the view to render fully
+        delay(1000)
+
+        view.content.visibility = View.VISIBLE
+        view.progress.visibility = View.GONE
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
+
+    private suspend fun makeListOfSections(): List<AlbumSection> = withContext(Dispatchers.IO) {
+
+        val sections = mutableListOf<AlbumSection>()
+        val limit = 7
+
+        val top40 = db.albumDao().getTop40(limit)
+        sections.add(
+            AlbumSection(
+                getString(R.string.top_40_soundtracks),
+                getString(R.string.top_40_soundtracks_subtitle),
+                top40,
+                true
+            )
+        )
+
+        val newly = db.albumDao().getTop100NewlyAdded(limit)
+        sections.add(
+            AlbumSection(
+                getString(R.string.top_newly_soundtracks),
+                getString(R.string.top_newly_soundtracks_subtitle),
+                newly,
+                false
+            )
+        )
+
+        val months = db.albumDao().getTop100Last6Months(limit)
+        sections.add(
+            AlbumSection(
+                getString(R.string.top_months_soundtracks),
+                getString(R.string.top_newly_soundtracks_subtitle),
+                months,
+                false
+            )
+        )
+
+        val year = db.albumDao().getTop100AllTime(limit)
+        sections.add(
+            AlbumSection(
+                getString(R.string.top_all_soundtracks),
+                getString(R.string.top_newly_soundtracks_subtitle),
+                year,
+                false
+            )
+        )
+
+        sections
+
     }
 
 }

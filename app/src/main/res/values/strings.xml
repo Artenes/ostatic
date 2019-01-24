@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">Ostatic</string>
+
     <string name="top_40_soundtracks">Top 40 soundtracks</string>
+    <string name="top_40_soundtracks_subtitle">Top 40 soundtracks for this week</string>
+
+    <string name="top_newly_soundtracks">Top 100 newly added soundtracks</string>
+    <string name="top_newly_soundtracks_subtitle">Latest songs from our users</string>
+
+    <string name="top_months_soundtracks">Last 6 months top 100 soundtracks</string>
+    <string name="top_months_soundtracks_subtitle">Most popular from last 6 months</string>
+
+    <string name="top_all_soundtracks">All time top 100 soundtracks</string>
+    <string name="top_all_soundtracks_subtitle">Best game songs of all time</string>
+
 </resources>

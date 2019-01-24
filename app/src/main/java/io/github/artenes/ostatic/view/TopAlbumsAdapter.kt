@@ -1,22 +1,24 @@
 package io.github.artenes.ostatic.view
 
+import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.view.marginTop
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import io.github.artenes.ostatic.R
+import io.github.artenes.ostatic.db.TopAlbumView
 import kotlinx.android.synthetic.main.album_section.view.*
 
 data class Album(val title: String, val cover: String)
 
-data class AlbumSection(val title: String, val subtitle: String, val albums: List<Album>, val isHighlight: Boolean)
+data class AlbumSection(val title: String, val subtitle: String, val albums: List<TopAlbumView>, val isHighlight: Boolean)
 
 class TopAlbumsAdapter : RecyclerView.Adapter<TopAlbumsAdapter.AlbumSectionViewHolder>() {
 
@@ -88,9 +90,9 @@ class TopAlbumsAdapter : RecyclerView.Adapter<TopAlbumsAdapter.AlbumSectionViewH
 
 class AlbumListAdapter(val isHighlight: Boolean) : RecyclerView.Adapter<AlbumListAdapter.AlbumViewHolder>() {
 
-    var albums: MutableList<Album> = mutableListOf()
+    var albums: MutableList<TopAlbumView> = mutableListOf()
 
-    fun setData(newAlbums: List<Album>) {
+    fun setData(newAlbums: List<TopAlbumView>) {
         albums.clear()
         albums.addAll(newAlbums)
         notifyDataSetChanged()
@@ -114,12 +116,13 @@ class AlbumListAdapter(val isHighlight: Boolean) : RecyclerView.Adapter<AlbumLis
 
     inner class AlbumViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        fun bind(album: Album) {
-            itemView.findViewById<TextView>(R.id.itemTitle).text = album.title
-            Picasso.get()
-                .load(album.cover)
-                .into(itemView.findViewById<ImageView>(R.id.itemAlbumCover))
-
+        fun bind(album: TopAlbumView) {
+            itemView.findViewById<TextView>(R.id.itemTitle).text = album.name
+            if (!album.cover.isNullOrEmpty()) {
+                Picasso.get()
+                    .load(album.cover)
+                    .into(itemView.findViewById<ImageView>(R.id.itemAlbumCover))
+            }
         }
 
     }
