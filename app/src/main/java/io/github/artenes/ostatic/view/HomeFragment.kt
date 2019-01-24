@@ -14,7 +14,7 @@ import io.github.artenes.ostatic.db.TopAlbumView
 import kotlinx.android.synthetic.main.preload_list.view.*
 import kotlinx.coroutines.*
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), AlbumListAdapter.OnAlbumClickListener {
 
     val job = Job()
     val scope = CoroutineScope(Dispatchers.Main + job)
@@ -28,7 +28,7 @@ class HomeFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.preload_list, container, false)
 
-        adapter = TopAlbumsAdapter()
+        adapter = TopAlbumsAdapter(this)
         view.mainList.layoutManager = LinearLayoutManager(context)
         view.mainList.adapter = adapter
 
@@ -59,6 +59,13 @@ class HomeFragment : Fragment() {
         view.progress.visibility = View.GONE
     }
 
+    override fun onAlbumClick(album: TopAlbumView) {
+        //work around to use what exists already
+        if (album.size == TopAlbumView.NEXT_PAGE_ID) {
+            AlbumsActivity.start(requireContext(), album.added, album.id)
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
@@ -70,7 +77,7 @@ class HomeFragment : Fragment() {
         val limit = 7
 
         val top40 = db.albumDao().getTop40(limit).toMutableList()
-        top40.add(TopAlbumView.makeNextPageAlbum(getString(R.string.all_albums)))
+        top40.add(TopAlbumView.makeNextPageAlbum(AlbumsFragment.TOP_40, getString(R.string.all_albums), getString(R.string.top_40_soundtracks)))
         sections.add(
             AlbumSection(
                 getString(R.string.top_40_soundtracks),
@@ -81,7 +88,7 @@ class HomeFragment : Fragment() {
         )
 
         val newly = db.albumDao().getTop100NewlyAdded(limit).toMutableList()
-        newly.add(TopAlbumView.makeNextPageAlbum(getString(R.string.all_albums)))
+        newly.add(TopAlbumView.makeNextPageAlbum(AlbumsFragment.TOP_NEWLY, getString(R.string.all_albums), getString(R.string.top_newly_soundtracks)))
         sections.add(
             AlbumSection(
                 getString(R.string.top_newly_soundtracks),
@@ -92,7 +99,7 @@ class HomeFragment : Fragment() {
         )
 
         val months = db.albumDao().getTop100Last6Months(limit).toMutableList()
-        months.add(TopAlbumView.makeNextPageAlbum(getString(R.string.all_albums)))
+        months.add(TopAlbumView.makeNextPageAlbum(AlbumsFragment.TOP_LAST, getString(R.string.all_albums), getString(R.string.top_months_soundtracks)))
         sections.add(
             AlbumSection(
                 getString(R.string.top_months_soundtracks),
@@ -103,7 +110,7 @@ class HomeFragment : Fragment() {
         )
 
         val year = db.albumDao().getTop100AllTime(limit).toMutableList()
-        year.add(TopAlbumView.makeNextPageAlbum(getString(R.string.all_albums)))
+        year.add(TopAlbumView.makeNextPageAlbum(AlbumsFragment.TOP_ALL, getString(R.string.all_albums), getString(R.string.top_all_soundtracks)))
         sections.add(
             AlbumSection(
                 getString(R.string.top_all_soundtracks),

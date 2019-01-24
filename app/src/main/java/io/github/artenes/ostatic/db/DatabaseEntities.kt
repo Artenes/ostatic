@@ -59,8 +59,8 @@ data class TopAlbumView(
 
         const val NEXT_PAGE_ID = "NEXT_PAGE_ID"
 
-        fun makeNextPageAlbum(name: String = ""): TopAlbumView {
-            return TopAlbumView(NEXT_PAGE_ID, name, "", "", "", 0, 0, "")
+        fun makeNextPageAlbum(id: String = "", name: String = "", title: String = ""): TopAlbumView {
+            return TopAlbumView(id, name, NEXT_PAGE_ID, title, "", 0, 0, "")
         }
 
     }

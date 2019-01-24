@@ -16,11 +16,15 @@ import io.github.artenes.ostatic.R
 import io.github.artenes.ostatic.db.TopAlbumView
 import kotlinx.android.synthetic.main.album_section.view.*
 
-data class Album(val title: String, val cover: String)
+data class AlbumSection(
+    val title: String,
+    val subtitle: String,
+    val albums: List<TopAlbumView>,
+    val isHighlight: Boolean
+)
 
-data class AlbumSection(val title: String, val subtitle: String, val albums: List<TopAlbumView>, val isHighlight: Boolean)
-
-class TopAlbumsAdapter : RecyclerView.Adapter<TopAlbumsAdapter.AlbumSectionViewHolder>() {
+class TopAlbumsAdapter(val listener: AlbumListAdapter.OnAlbumClickListener) :
+    RecyclerView.Adapter<TopAlbumsAdapter.AlbumSectionViewHolder>() {
 
     var sections: MutableList<AlbumSection> = mutableListOf()
 
@@ -31,7 +35,9 @@ class TopAlbumsAdapter : RecyclerView.Adapter<TopAlbumsAdapter.AlbumSectionViewH
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumSectionViewHolder {
-        return AlbumSectionViewHolder.make(parent)
+        val inflater = LayoutInflater.from(parent.context)
+        val view = inflater.inflate(R.layout.album_section, parent, false)
+        return AlbumSectionViewHolder(view)
     }
 
     override fun getItemCount(): Int {
@@ -43,26 +49,21 @@ class TopAlbumsAdapter : RecyclerView.Adapter<TopAlbumsAdapter.AlbumSectionViewH
         holder.bind(section, position == 0)
     }
 
-    class AlbumSectionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-        companion object {
-
-            fun make(parent: ViewGroup): AlbumSectionViewHolder {
-                val inflater = LayoutInflater.from(parent.context)
-                val view = inflater.inflate(R.layout.album_section, parent, false)
-                return AlbumSectionViewHolder(view)
-            }
-
-        }
+    inner class AlbumSectionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         fun bind(albumSection: AlbumSection, isFirst: Boolean) {
-            val adapter = AlbumListAdapter(albumSection.isHighlight)
+            val adapter = AlbumListAdapter(listener, albumSection.isHighlight)
             val sidesMargins = itemView.context.resources.getDimensionPixelSize(R.dimen.album_items_sides_space)
             val bottomMargin = itemView.context.resources.getDimensionPixelSize(R.dimen.album_items_bottom_space)
 
             if (isFirst) {
                 val vg = itemView.sectionTitle.layoutParams as ViewGroup.MarginLayoutParams
-                vg.setMargins(0, itemView.context.resources.getDimensionPixelSize(R.dimen.top_margin_first_section), 0, 0)
+                vg.setMargins(
+                    0,
+                    itemView.context.resources.getDimensionPixelSize(R.dimen.top_margin_first_section),
+                    0,
+                    0
+                )
                 itemView.sectionTitle.requestLayout()
             } else {
                 val vg = itemView.sectionTitle.layoutParams as ViewGroup.MarginLayoutParams
@@ -88,7 +89,12 @@ class TopAlbumsAdapter : RecyclerView.Adapter<TopAlbumsAdapter.AlbumSectionViewH
 
 }
 
-class AlbumListAdapter(val isHighlight: Boolean) : RecyclerView.Adapter<AlbumListAdapter.AlbumViewHolder>() {
+class AlbumListAdapter(val listener: OnAlbumClickListener, val isHighlight: Boolean) :
+    RecyclerView.Adapter<AlbumListAdapter.AlbumViewHolder>() {
+
+    interface OnAlbumClickListener {
+        fun onAlbumClick(album: TopAlbumView)
+    }
 
     var albums: MutableList<TopAlbumView> = mutableListOf()
 
@@ -114,7 +120,7 @@ class AlbumListAdapter(val isHighlight: Boolean) : RecyclerView.Adapter<AlbumLis
         holder.bind(album)
     }
 
-    inner class AlbumViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class AlbumViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
 
         fun bind(album: TopAlbumView) {
             itemView.findViewById<TextView>(R.id.itemTitle).text = album.name
@@ -126,6 +132,12 @@ class AlbumListAdapter(val isHighlight: Boolean) : RecyclerView.Adapter<AlbumLis
             } else {
                 cover.setImageDrawable(ColorDrawable(Color.WHITE))
             }
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            val album = albums[adapterPosition]
+            listener.onAlbumClick(album)
         }
 
     }
