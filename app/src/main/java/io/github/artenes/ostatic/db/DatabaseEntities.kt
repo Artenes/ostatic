@@ -37,6 +37,13 @@ data class Top100NewlyAdded(
     var position: Int
 )
 
+@Entity(tableName = "covers")
+data class Covers(
+    @PrimaryKey var id: Int,
+    var album_id: String,
+    var url: String
+)
+
 data class TopAlbumView(
     var id: String,
     var name: String,
@@ -44,5 +51,6 @@ data class TopAlbumView(
     var added: String,
     var time: String,
     var files: Int,
-    var position: Int
+    var position: Int,
+    var cover: String?
 )
