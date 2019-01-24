@@ -10,8 +10,8 @@
 
     <ImageView
             android:id="@+id/itemAlbumCover"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
+            android:layout_width="@dimen/large_image_thumbnail"
+            android:layout_height="@dimen/large_image_thumbnail"
             android:scaleType="centerCrop"
             android:src="@android:color/white"
             android:layout_gravity="center"

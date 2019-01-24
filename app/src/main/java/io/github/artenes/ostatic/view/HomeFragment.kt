@@ -11,7 +11,7 @@ import io.github.artenes.ostatic.R
 import io.github.artenes.ostatic.db.ApplicationDatabase
 import io.github.artenes.ostatic.db.TopAlbumView
 
-import kotlinx.android.synthetic.main.list.view.*
+import kotlinx.android.synthetic.main.preload_list.view.*
 import kotlinx.coroutines.*
 
 class HomeFragment : Fragment() {
@@ -26,7 +26,7 @@ class HomeFragment : Fragment() {
 
         val context: Context = container?.context!!
 
-        val view = inflater.inflate(R.layout.list, container, false)
+        val view = inflater.inflate(R.layout.preload_list, container, false)
 
         adapter = TopAlbumsAdapter()
         view.mainList.layoutManager = LinearLayoutManager(context)

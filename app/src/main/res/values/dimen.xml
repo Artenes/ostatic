@@ -5,5 +5,8 @@
     <dimen name="album_items_sides_space">10dp</dimen>
     <dimen name="album_items_bottom_space">20dp</dimen>
     <dimen name="top_margin_first_section">50dp</dimen>
+    <dimen name="small_image_thumbnail">60dp</dimen>
+    <dimen name="medium_image_thumbnail">128dp</dimen>
+    <dimen name="large_image_thumbnail">140dp</dimen>
 
 </resources>

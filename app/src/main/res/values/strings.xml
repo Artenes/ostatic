@@ -15,4 +15,6 @@
 
     <string name="all_albums">All albums</string>
 
+    <string name="number_songs">%d songs</string>
+
 </resources>
