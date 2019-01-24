@@ -14,10 +14,7 @@ class OstaticApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
-        if (!applicationDatabaseExists()) {
-            copyCachedDatabaseToInternalStorage()
-        }
+        copyCachedDatabaseToInternalStorage()
     }
 
     private fun applicationDatabaseExists(): Boolean {
