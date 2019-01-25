@@ -1,5 +1,6 @@
 package io.github.artenes.ostatic.db
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -42,6 +43,26 @@ data class Covers(
     @PrimaryKey var id: Int,
     var album_id: String,
     var url: String
+)
+
+@Entity(tableName = "songs")
+data class SongEntity(
+    @PrimaryKey var id: String,
+    var name: String,
+    var track: Int,
+    var time: String,
+    var url: String,
+    @ColumnInfo(name="album_id") var albumId: String
+)
+
+data class AlbumView(
+    var id: String,
+    var name: String,
+    var size: String,
+    var added: String,
+    var time: String,
+    var files: Int,
+    var cover: String?
 )
 
 data class TopAlbumView(

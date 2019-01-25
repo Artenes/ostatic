@@ -63,6 +63,8 @@ class HomeFragment : Fragment(), AlbumListAdapter.OnAlbumClickListener {
         //work around to use what exists already
         if (album.size == TopAlbumView.NEXT_PAGE_ID) {
             AlbumsActivity.start(requireContext(), album.added, album.id)
+        } else {
+            AlbumActivity.start(requireContext(), album.id)
         }
     }
 

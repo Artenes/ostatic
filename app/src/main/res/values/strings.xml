@@ -17,4 +17,6 @@
 
     <string name="number_songs">%d songs</string>
 
+    <string name="play">Play</string>
+
 </resources>
