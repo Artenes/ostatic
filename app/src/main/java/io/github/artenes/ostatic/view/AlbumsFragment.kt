@@ -9,10 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.artenes.ostatic.R
 import io.github.artenes.ostatic.db.ApplicationDatabase
+import io.github.artenes.ostatic.db.TopAlbumView
 import kotlinx.android.synthetic.main.preload_list.view.*
 import kotlinx.coroutines.*
 
-class AlbumsFragment : Fragment() {
+class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
 
     companion object {
 
@@ -47,7 +48,7 @@ class AlbumsFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.list, container, false)
 
-        adapter = AlbumsAdapter()
+        adapter = AlbumsAdapter(this)
         view.mainList.layoutManager = LinearLayoutManager(context)
         view.mainList.adapter = adapter
 
@@ -81,6 +82,10 @@ class AlbumsFragment : Fragment() {
 
         view.mainList.visibility = View.VISIBLE
         view.progress.visibility = View.GONE
+    }
+
+    override fun onAlbumClicked(album: TopAlbumView) {
+        AlbumActivity.start(requireContext(), album.id)
     }
 
     override fun onDestroy() {
