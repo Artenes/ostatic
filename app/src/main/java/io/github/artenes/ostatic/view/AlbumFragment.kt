@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.squareup.picasso.Picasso
+import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.db.ApplicationDatabase
 import io.github.artenes.ostatic.db.SongEntity
 import io.github.artenes.ostatic.db.SongView
@@ -47,7 +48,7 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
         arguments?.getString(AlbumActivity.ALBUM_ID) ?: ""
     }
 
-    lateinit var db: ApplicationDatabase
+    val repo = OstaticApplication.REPOSITORY
 
     val job = Job()
     val scope = CoroutineScope(Dispatchers.Main + job)
@@ -79,7 +80,6 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
         activity.supportActionBar?.setHomeButtonEnabled(true)
         activity.supportActionBar?.title = ""
 
-        db = ApplicationDatabase.getInstance(requireContext())
         loadAndBind()
     }
 
@@ -92,10 +92,10 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
         view.progressBar.visibility = View.VISIBLE
 
         val album = withContext(Dispatchers.IO) {
-            db.albumDao().getAlbum(id)
+            repo.getAlbum(id)
         }
         val songs = withContext(Dispatchers.IO) {
-            db.albumDao().getSongs(id)
+            repo.getSongs(id)
         }
 
         view.albumTitle.text = album.name

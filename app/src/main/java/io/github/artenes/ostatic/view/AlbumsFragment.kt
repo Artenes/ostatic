@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.R
 import io.github.artenes.ostatic.db.ApplicationDatabase
 import io.github.artenes.ostatic.db.TopAlbumView
@@ -33,6 +34,7 @@ class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
 
     }
 
+
     val job = Job()
     val scope = CoroutineScope(Dispatchers.Main + job)
     val category by lazy {
@@ -40,8 +42,8 @@ class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
         args.getString(CATEGORY)
     }
 
+    val repo = OstaticApplication.REPOSITORY
     lateinit var adapter: AlbumsAdapter
-    lateinit var db: ApplicationDatabase
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val context: Context = container?.context!!
@@ -57,8 +59,6 @@ class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        db = ApplicationDatabase.getInstance(requireContext())
         loadAndBind()
     }
 
@@ -70,10 +70,10 @@ class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
 
         val albums = withContext(Dispatchers.IO) {
             when (category) {
-                TOP_40 -> db.albumDao().getTop40()
-                TOP_ALL -> db.albumDao().getTop100AllTime()
-                TOP_LAST -> db.albumDao().getTop100Last6Months()
-                TOP_NEWLY -> db.albumDao().getTop100NewlyAdded()
+                TOP_40 -> repo.getTop40()
+                TOP_ALL -> repo.getTop100AllTime()
+                TOP_LAST -> repo.getTop100Last6Months()
+                TOP_NEWLY -> repo.getTop100NewlyAdded()
                 else -> emptyList()
             }
         }
