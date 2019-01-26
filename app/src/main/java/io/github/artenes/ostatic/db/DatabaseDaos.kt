@@ -21,7 +21,7 @@ interface AlbumDao {
     @Query("select id, name, files, size, added, time, (select url from covers where covers.album_id = albums.id limit 1) as cover from albums where id = :id")
     suspend fun getAlbum(id: String): AlbumView
 
-    @Query("select * from songs where album_id = :id order by track asc")
-    suspend fun getSongs(id: String): List<SongEntity>
+    @Query("select songs.id, songs.name, songs.track, songs.time, songs.url, songs.album_id, albums.name as album_name, (select url from covers where covers.album_id = :id limit 1) as album_cover from songs inner join albums on albums.id = songs.album_id where album_id = :id order by track asc")
+    suspend fun getSongs(id: String): List<SongView>
 
 }

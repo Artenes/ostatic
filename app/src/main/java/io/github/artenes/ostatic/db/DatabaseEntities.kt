@@ -65,6 +65,17 @@ data class AlbumView(
     var cover: String?
 )
 
+data class SongView(
+    var id: String,
+    var name: String,
+    var track: Int,
+    var time: String,
+    var url: String,
+    @ColumnInfo(name="album_id") var albumId: String,
+    @ColumnInfo(name="album_name") var albumName: String,
+    @ColumnInfo(name="album_cover") var albumCover: String?
+)
+
 data class TopAlbumView(
     var id: String,
     var name: String,

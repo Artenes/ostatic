@@ -29,6 +29,8 @@
         <activity android:name=".view.AlbumActivity" android:theme="@style/AppTheme.NotActionBar"
                   android:screenOrientation="portrait"/>
 
+        <service android:name=".service.MusicPlayerService" android:exported="false"/>
+
     </application>
 
 </manifest>
