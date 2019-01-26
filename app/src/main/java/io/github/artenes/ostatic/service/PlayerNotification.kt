@@ -41,6 +41,7 @@ class PlayerNotification(val context: Context) {
         setSmallIcon(R.drawable.ic_launcher_foreground)
         setStyle(androidx.media.app.NotificationCompat.DecoratedMediaCustomViewStyle())
         setCustomContentView(layout)
+        setDeleteIntent(createPendingIntent(MusicPlayerService.ACTION_EXIT))
     }
 
     fun attachSession(session: MusicSession) {

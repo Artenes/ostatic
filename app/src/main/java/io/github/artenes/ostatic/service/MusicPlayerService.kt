@@ -17,6 +17,7 @@ class MusicPlayerService : Service() {
         const val ACTION_PLAY_PAUSE = "ACTION_PLAY_PAUSE"
         const val ACTION_NEXT = "ACTION_NEXT"
         const val ACTION_PREVIOUS = "ACTION_PREVIOUS"
+        const val ACTION_EXIT = "ACTION_EXIT"
 
         fun bind(context: Context, listener: ServiceConnection) {
             context.startService(Intent(context, MusicPlayerService::class.java))
@@ -49,7 +50,10 @@ class MusicPlayerService : Service() {
             ACTION_NEXT -> {
                 mSession?.next()
             }
-            else -> {}
+            ACTION_EXIT -> {
+                stopSelf()
+            }
+            else -> { }
         }
         return START_NOT_STICKY
     }
@@ -73,6 +77,7 @@ class MusicPlayerService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        mSession?.clearListeners()
         mPlayer.release()
     }
 
