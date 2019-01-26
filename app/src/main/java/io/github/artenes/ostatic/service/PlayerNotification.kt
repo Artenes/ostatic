@@ -38,7 +38,7 @@ class PlayerNotification(val context: Context) {
         layout.setOnClickPendingIntent(R.id.playPauseButton, createPendingIntent(MusicPlayerService.ACTION_PLAY_PAUSE))
         layout.setOnClickPendingIntent(R.id.nextButton, createPendingIntent(MusicPlayerService.ACTION_NEXT))
 
-        setSmallIcon(R.drawable.ic_launcher_foreground)
+        setSmallIcon(R.drawable.ic_play)
         setStyle(androidx.media.app.NotificationCompat.DecoratedMediaCustomViewStyle())
         setCustomContentView(layout)
         setDeleteIntent(createPendingIntent(MusicPlayerService.ACTION_EXIT))
