@@ -43,6 +43,10 @@ class MusicSession(playList: List<SongView>, currentIndex: Int, private val play
         liveState.observeForever(observer)
     }
 
+    fun removeListener(observer: Observer<MusicPlayerState>) {
+        liveState.removeObserver(observer)
+    }
+
     fun clearListeners() {
         for (observer in observers) {
             liveState.removeObserver(observer)
@@ -55,6 +59,10 @@ class MusicSession(playList: List<SongView>, currentIndex: Int, private val play
 
     fun playOrPause() {
         player.playOrPause()
+    }
+
+    fun pause() {
+        player.pause()
     }
 
     fun next() {
@@ -153,6 +161,10 @@ class MusicPlayer(context: Context, userAgent: String) {
 
     fun playOrPause() {
         player.playWhenReady = !player.playWhenReady
+    }
+
+    fun pause() {
+        player.playWhenReady = false
     }
 
     fun previous() {

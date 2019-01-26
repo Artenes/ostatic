@@ -1,7 +1,9 @@
 package io.github.artenes.ostatic.service
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Binder
 import android.os.IBinder
 import androidx.annotation.Nullable
@@ -15,6 +17,13 @@ class MusicPlayerService : Service() {
         const val ACTION_PLAY_PAUSE = "ACTION_PLAY_PAUSE"
         const val ACTION_NEXT = "ACTION_NEXT"
         const val ACTION_PREVIOUS = "ACTION_PREVIOUS"
+
+        fun bind(context: Context, listener: ServiceConnection) {
+            context.startService(Intent(context, MusicPlayerService::class.java))
+
+            val serviceIntent = Intent(context, MusicPlayerService::class.java)
+            context.bindService(serviceIntent, listener, Context.BIND_AUTO_CREATE)
+        }
 
     }
 
@@ -55,6 +64,7 @@ class MusicPlayerService : Service() {
     }
 
     fun createSession(id: String, songs: List<SongView>, currentIndex: Int): MusicSession {
+        mSession?.playOrPause()
         mSession?.clearListeners()
         mSession = MusicSession(songs, currentIndex, mPlayer, id)
         mNotification.attachSession(mSession as MusicSession)

@@ -1,8 +1,6 @@
 package io.github.artenes.ostatic.view
 
 import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -20,6 +18,7 @@ import com.squareup.picasso.Picasso
 import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.db.SongView
 import io.github.artenes.ostatic.service.MusicPlayerService
+import io.github.artenes.ostatic.service.MusicPlayerState
 import io.github.artenes.ostatic.service.MusicSession
 import kotlinx.android.synthetic.main.album_view.view.*
 import kotlinx.coroutines.*
@@ -64,9 +63,6 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val serviceIntent = Intent(requireActivity(), MusicPlayerService::class.java)
-        requireActivity().bindService(serviceIntent, this, Context.BIND_AUTO_CREATE)
-
         val activity = this.activity as AppCompatActivity
 
         activity.setSupportActionBar(view?.toolbar)
@@ -107,6 +103,8 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
         view.songsList.visibility = View.VISIBLE
         view.playButton.visibility = View.VISIBLE
         view.progressBar.visibility = View.GONE
+
+        MusicPlayerService.bind(requireContext(), this@AlbumFragment)
     }
 
     override fun onDestroy() {
@@ -115,48 +113,58 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
         requireActivity().unbindService(this)
     }
 
-    private fun startSession(position: Int) {
+    private fun bindToCurrentSession() {
+        musicSession = service.getSession(id)
+        if (musicSession != null) {
+            musicSession?.addListener(musicStateObserver)
+        }
+    }
+
+    private fun createNewSession(position: Int) {
         musicSession = service.getSession(id)
         if (musicSession == null) {
             musicSession = service.createSession(id, adapter.songs, position)
-            musicSession?.addListener(Observer {
-                when {
-                    it.isBuffering -> {
-                        adapter.buffer(it.currentIndex)
-                        view?.playButton?.isEnabled = false
-                    }
-                    it.isPlaying -> {
-                        adapter.play(it.currentIndex)
-                        view?.playButton?.isEnabled = true
-                        view?.playButton?.text = getString(R.string.pause)
-                    }
-                    else -> {
-                        view?.playButton?.isEnabled = true
-                        view?.playButton?.text = getString(R.string.play)
-                        adapter.pause(it.currentIndex)
-                    }
-                }
-            })
+            musicSession?.addListener(musicStateObserver)
         }
     }
 
     override fun onSongClick(position: Int, song: SongView) {
-        startSession(position)
+        createNewSession(position)
         musicSession?.playMusic(position)
     }
 
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-        this.service =(service as MusicPlayerService.MusicPlayerBinder).service
+        this.service = (service as MusicPlayerService.MusicPlayerBinder).service
+        bindToCurrentSession()
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
-        //do nothing
+        musicSession?.removeListener(musicStateObserver)
     }
 
     override fun onClick(v: View?) {
         if (v?.id == R.id.playButton) {
-            startSession(0)
+            createNewSession(0)
             musicSession?.playOrPause()
+        }
+    }
+
+    val musicStateObserver = Observer<MusicPlayerState> {
+        when {
+            it.isBuffering -> {
+                adapter.buffer(it.currentIndex)
+                view?.playButton?.isEnabled = false
+            }
+            it.isPlaying -> {
+                adapter.play(it.currentIndex)
+                view?.playButton?.isEnabled = true
+                view?.playButton?.text = getString(R.string.pause)
+            }
+            else -> {
+                view?.playButton?.isEnabled = true
+                view?.playButton?.text = getString(R.string.play)
+                adapter.pause(it.currentIndex)
+            }
         }
     }
 

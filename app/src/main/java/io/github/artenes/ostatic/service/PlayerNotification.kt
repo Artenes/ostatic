@@ -72,10 +72,12 @@ class PlayerNotification(val context: Context) {
         if (isBuffering) {
             layout.setViewVisibility(R.id.buttons, View.GONE)
             layout.setViewVisibility(R.id.progressBarContainer, View.VISIBLE)
+            builder.setOngoing(true)
         } else {
             layout.setViewVisibility(R.id.progressBarContainer, View.GONE)
             layout.setViewVisibility(R.id.buttons, View.VISIBLE)
             layout.setImageViewResource(R.id.playPauseButton, if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play)
+            builder.setOngoing(isPlaying)
         }
     }
 
