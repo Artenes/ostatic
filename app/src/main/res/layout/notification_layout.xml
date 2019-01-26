@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/root"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:maxHeight="64dp"
+              android:baselineAligned="false"
+              android:orientation="horizontal">
+
+    <LinearLayout
+            android:id="@+id/media_titles"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_gravity="fill_vertical"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+        <TextView
+                android:id="@+id/songTitle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:gravity="bottom"
+                android:singleLine="true"
+                android:includeFontPadding="false"
+                android:textAppearance="@style/TextAppearance.Compat.Notification.Title.Media"
+                tools:ignore="NestedWeights"
+                android:textColor="@android:color/black"/>
+
+        <TextView
+                android:id="@+id/songAlbum"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:singleLine="true"
+                android:includeFontPadding="false"
+                android:textAppearance="@style/TextAppearance.Compat.Notification.Info.Media"
+                android:textColor="@color/colorDarkGray"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/buttons"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layoutDirection="ltr"
+            android:orientation="horizontal"
+            tools:ignore="UnusedAttribute"
+            android:layout_weight="2"
+            android:gravity="center">
+
+        <ImageButton
+                android:id="@+id/previousButton"
+                android:background="@null"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_previous"
+                android:gravity="center"
+                android:tint="@color/colorDarkGray"
+                tools:ignore="ContentDescription"/>
+
+        <ImageButton
+                android:id="@+id/playPauseButton"
+                android:background="@null"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_pause"
+                android:gravity="center"
+                android:tint="@color/colorDarkGray"
+                tools:ignore="ContentDescription"/>
+
+        <ImageButton
+                android:id="@+id/nextButton"
+                android:background="@null"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_next"
+                android:gravity="center"
+                android:tint="@color/colorDarkGray"
+                tools:ignore="ContentDescription" />
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/progressBarContainer"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_gravity="center_vertical|end"
+            android:layoutDirection="ltr"
+            android:orientation="horizontal"
+            tools:ignore="UnusedAttribute"
+            android:layout_weight="2"
+            android:visibility="gone"
+            android:gravity="center">
+
+        <ProgressBar
+                style="?android:attr/progressBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:id="@+id/progressBar"/>
+
+    </LinearLayout>
+
+</LinearLayout>

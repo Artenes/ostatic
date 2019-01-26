@@ -10,24 +10,18 @@ import io.github.artenes.ostatic.R
 import android.os.Bundle
 import android.os.IBinder
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.squareup.picasso.Picasso
 import io.github.artenes.ostatic.OstaticApplication
-import io.github.artenes.ostatic.db.ApplicationDatabase
-import io.github.artenes.ostatic.db.SongEntity
 import io.github.artenes.ostatic.db.SongView
 import io.github.artenes.ostatic.service.MusicPlayerService
-import io.github.artenes.ostatic.service.MusicPlayerState
 import io.github.artenes.ostatic.service.MusicSession
 import kotlinx.android.synthetic.main.album_view.view.*
-import kotlinx.android.synthetic.main.preload_list.view.*
 import kotlinx.coroutines.*
 
 class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickListener, View.OnClickListener {
@@ -125,7 +119,7 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
         musicSession = service.getSession(id)
         if (musicSession == null) {
             musicSession = service.createSession(id, adapter.songs, position)
-            musicSession?.setListener(Observer {
+            musicSession?.addListener(Observer {
                 when {
                     it.isBuffering -> {
                         adapter.buffer(it.currentIndex)

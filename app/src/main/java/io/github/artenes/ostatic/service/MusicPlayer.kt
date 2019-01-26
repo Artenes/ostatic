@@ -30,7 +30,7 @@ class MusicSession(playList: List<SongView>, currentIndex: Int, private val play
     }
 
     private val liveState: MutableLiveData<MusicPlayerState> = MutableLiveData()
-    private var observer: Observer<MusicPlayerState>? = null
+    private var observers: MutableList<Observer<MusicPlayerState>> = mutableListOf()
 
     init {
         player.setListener(this)
@@ -38,13 +38,15 @@ class MusicSession(playList: List<SongView>, currentIndex: Int, private val play
         liveState.value = MusicPlayerState(false, false, playList.toList(), currentIndex)
     }
 
-    fun setListener(observer: Observer<MusicPlayerState>) {
+    fun addListener(observer: Observer<MusicPlayerState>) {
+        observers.add(observer)
         liveState.observeForever(observer)
-        this.observer = observer
     }
 
     fun clearListeners() {
-        liveState.removeObserver(observer as Observer<in MusicPlayerState>)
+        for (observer in observers) {
+            liveState.removeObserver(observer)
+        }
     }
 
     fun playMusic(index: Int) {
