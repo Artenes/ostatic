@@ -19,7 +19,7 @@ class ApplicationRepository(context: Context) {
     }
 
     suspend fun getTop100NewlyAdded(limit: Int = 100): List<TopAlbumView> {
-        return db.albumDao().getTop100NewlyAdded(100)
+        return db.albumDao().getTop100NewlyAdded(limit)
     }
 
     suspend fun getAlbum(id: String): AlbumView {
