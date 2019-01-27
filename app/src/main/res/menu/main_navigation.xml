@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="@string/home" android:id="@+id/action_home" android:icon="@drawable/ic_home"
+          android:visible="true"/>
+    <item android:title="@string/search" android:id="@+id/action_search" android:icon="@drawable/ic_search"
+          android:visible="true"/>
+    <item android:title="@string/library" android:id="@+id/action_library" android:icon="@drawable/ic_library"
+          android:visible="true"/>
+</menu>

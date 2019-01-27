@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Ostatic</string>
 
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="library">Library</string>
+
     <string name="top_40_soundtracks">Top 40 soundtracks</string>
     <string name="top_40_soundtracks_subtitle">Top 40 soundtracks for this week</string>
 
