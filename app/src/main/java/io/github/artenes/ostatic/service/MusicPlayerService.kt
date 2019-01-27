@@ -21,7 +21,6 @@ class MusicPlayerService : Service() {
         const val ACTION_NEXT = "ACTION_NEXT"
         const val ACTION_PREVIOUS = "ACTION_PREVIOUS"
         const val ACTION_EXIT = "ACTION_EXIT"
-        const val WIFI_LOCK_NAME = "io.github.artenes.ostatic.WIFI_LOCK"
 
         fun bind(context: Context, listener: ServiceConnection) {
             context.startService(Intent(context, MusicPlayerService::class.java))
@@ -36,16 +35,13 @@ class MusicPlayerService : Service() {
     private lateinit var mPlayer: MusicPlayer
     private lateinit var mNotification: PlayerNotification
     private var mSession: MusicSession? = null
-    private lateinit var mWifiLock: WifiManager.WifiLock
+    private lateinit var mWifiLock: WifiLock
 
     override fun onCreate() {
         super.onCreate()
         mPlayer = MusicPlayer(this, "Ostatic/0.0.1")
         mNotification = PlayerNotification(this)
-        mWifiLock = (applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager).createWifiLock(
-            WifiManager.WIFI_MODE_FULL,
-            WIFI_LOCK_NAME
-        )
+        mWifiLock = WifiLock(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -62,9 +58,8 @@ class MusicPlayerService : Service() {
             ACTION_EXIT -> {
                 mSession?.clearListeners()
                 mSession?.pause()
-                mWifiLock.release()
+                mWifiLock.releaseBecause("notification is being swiped away")
                 stopSelf()
-                Log.i(TAG, "Released WIFI lock because notification is being swiped away")
             }
             else -> {
             }
@@ -87,6 +82,7 @@ class MusicPlayerService : Service() {
         mSession = MusicSession(songs, currentIndex, mPlayer, id)
         mNotification.attachSession(mSession as MusicSession)
         mSession?.addListener(sessionListener)
+        mWifiLock.acquireBecause("a new session is being created")
         return mSession as MusicSession
     }
 
@@ -105,12 +101,42 @@ class MusicPlayerService : Service() {
     }
 
     private val sessionListener = Observer<MusicPlayerState> {
-        if (it.isPlaying) {
-            mWifiLock.acquire()
-            Log.i(TAG, "Acquired WIFI lock because music is playing")
-        } else {
-            mWifiLock.release()
-            Log.i(TAG, "Released WIFI lock because music has paused")
+        if (!it.isBuffering && !it.isPlaying) {
+            mWifiLock.releaseBecause("music has paused")
+        }
+
+        if (!it.isBuffering && it.isPlaying) {
+            mWifiLock.acquireBecause("music is playing")
+        }
+    }
+
+}
+
+class WifiLock(context: Context) {
+
+    companion object {
+
+        const val WIFI_LOCK_NAME = "io.github.artenes.ostatic.WIFI_LOCK"
+        const val TAG = "WifiLock"
+
+    }
+
+    private val lock = (context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager).createWifiLock(
+        WifiManager.WIFI_MODE_FULL,
+        WIFI_LOCK_NAME
+    )
+
+    fun acquireBecause(reason: String) {
+        if (!lock.isHeld) {
+            lock.acquire()
+            Log.d(TAG, "Acquired WIFI lock because $reason")
+        }
+    }
+
+    fun releaseBecause(reason: String) {
+        if (lock.isHeld) {
+            lock.release()
+            Log.d(TAG, "Released WIFI lock because $reason")
         }
     }
 
