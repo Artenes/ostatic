@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.github.artenes.ostatic.view.HomeFragment
-import io.github.artenes.ostatic.view.LibraryFragment
+import io.github.artenes.ostatic.view.AboutFragment
 import io.github.artenes.ostatic.view.SearchFragment
 import kotlinx.android.synthetic.main.main_activity.*
 
@@ -27,15 +27,15 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         replaceFragment(SearchFragment())
     }
 
-    fun changeToLibraryTab() {
-        replaceFragment(LibraryFragment())
+    fun changeToAboutTab() {
+        replaceFragment(AboutFragment())
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_home -> changeToHomeTab()
             R.id.action_search -> changeToSearchTab()
-            R.id.action_library -> changeToLibraryTab()
+            R.id.action_about -> changeToAboutTab()
         }
         return true
     }

@@ -4,6 +4,7 @@
     <string name="home">Home</string>
     <string name="search">Search</string>
     <string name="library">Library</string>
+    <string name="about">About</string>
 
     <string name="search_by_game_title">Search by game title</string>
     <string name="find_your_favorite_games_here">Find your favorite games here</string>
