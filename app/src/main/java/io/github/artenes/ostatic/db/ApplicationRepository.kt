@@ -30,4 +30,8 @@ class ApplicationRepository(context: Context) {
         return db.albumDao().getSongs(id)
     }
 
+    suspend fun searchAlbum(query: String): List<TopAlbumView> {
+        return db.albumDao().searchAlbums("%$query%")
+    }
+
 }
