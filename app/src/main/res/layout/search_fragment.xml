@@ -6,17 +6,16 @@
 
     <EditText
             android:id="@+id/searchQuery"
+            style="@style/SearchEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toTopOf="parent" android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginStart="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" android:inputType="textPersonName"
             android:hint="@string/search_by_game_title"
-            android:textColorHint="@android:color/white"
-            android:textColor="@android:color/white" android:singleLine="true"
-            android:imeOptions="actionSearch"/>
+            android:imeOptions="actionSearch">
+        <requestFocus/>
+    </EditText>
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/resultList"
@@ -25,6 +24,7 @@
             app:layout_constraintTop_toBottomOf="@+id/searchQuery" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp" android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
+
     <ProgressBar
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
@@ -33,4 +33,11 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView android:id="@+id/queryStatus"
+              android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:drawableTop="@drawable/ic_search" android:text="@string/find_your_favorite_games_here"
+              app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toBottomOf="@id/searchQuery"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

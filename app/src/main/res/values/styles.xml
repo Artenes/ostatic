@@ -48,4 +48,15 @@
         <item name="android:textColor">@color/colorPassive</item>
     </style>
 
+    <style name="SearchEditText" parent="@style/Widget.AppCompat.EditText">
+        <item name="android:textColorHint">@color/colorUnselected</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:padding">20dp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:background">@color/colorLightGray</item>
+        <item name="android:drawableEnd">@drawable/ic_search</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
 </resources>

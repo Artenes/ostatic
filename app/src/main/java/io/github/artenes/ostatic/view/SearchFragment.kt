@@ -1,11 +1,13 @@
 package io.github.artenes.ostatic.view
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,18 +34,38 @@ class SearchFragment : Fragment(), TextView.OnEditorActionListener, AlbumsAdapte
     }
 
     fun search(query: String) = scope.launch {
-        val view = this@SearchFragment.view as View
-
-        view.progressBar.visibility = View.VISIBLE
-        view.resultList.visibility = View.GONE
+        showLoadingView()
 
         val results = withContext(Dispatchers.IO) {
             repo.searchAlbum(query)
         }
-        adapter.setData(results)
 
-        view.progressBar.visibility = View.GONE
-        view.resultList.visibility = View.VISIBLE
+        if (results.isEmpty()) {
+            showNoResultsView()
+        } else {
+            showResults(results)
+        }
+    }
+
+    fun showLoadingView() {
+        view?.progressBar?.visibility = View.VISIBLE
+        view?.resultList?.visibility = View.GONE
+        view?.queryStatus?.visibility = View.GONE
+    }
+
+    fun showNoResultsView() {
+        view?.progressBar?.visibility = View.GONE
+        view?.queryStatus?.visibility = View.VISIBLE
+        view?.queryStatus?.text = getString(R.string.no_games_found)
+        view?.resultList?.visibility = View.GONE
+    }
+
+    fun showResults(results: List<TopAlbumView>) {
+        hideKeyboard()
+        view?.progressBar?.visibility = View.GONE
+        view?.queryStatus?.visibility = View.GONE
+        view?.resultList?.visibility = View.VISIBLE
+        adapter.setData(results)
     }
 
     fun openAlbum(albumId: String) {
@@ -65,6 +87,11 @@ class SearchFragment : Fragment(), TextView.OnEditorActionListener, AlbumsAdapte
 
     override fun onAlbumClicked(album: TopAlbumView) {
         openAlbum(album.id)
+    }
+
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.queryStatus?.windowToken, 0)
     }
 
 }
