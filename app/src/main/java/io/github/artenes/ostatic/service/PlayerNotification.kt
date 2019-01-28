@@ -83,6 +83,9 @@ class PlayerNotification(val context: Context) {
     }
 
     private val notificationObserver = Observer<MusicPlayerState> {
+        if (it.hasFinished) {
+            return@Observer
+        }
         val song = it.playlist[it.currentIndex]
         refreshState(song.name, song.albumName, it.isPlaying, it.isBuffering)
         manager.notify(NOTIFICATION_SESSION_ID, builder.build())

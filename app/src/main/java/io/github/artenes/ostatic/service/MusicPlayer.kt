@@ -17,7 +17,8 @@ data class MusicPlayerState(
     val isPlaying: Boolean,
     val isBuffering: Boolean,
     val playlist: List<SongView>,
-    val currentIndex: Int
+    val currentIndex: Int,
+    val hasFinished: Boolean = false
 )
 
 class MusicSession(playList: List<SongView>, currentIndex: Int, private val player: MusicPlayer, val id: String) :
@@ -37,6 +38,14 @@ class MusicSession(playList: List<SongView>, currentIndex: Int, private val play
         player.prepare(playList, currentIndex)
         liveState.value = MusicPlayerState(false, false, playList.toList(), currentIndex)
         player.pause()
+    }
+
+    fun getCurrentState():MusicPlayerState? {
+        return liveState.value
+    }
+
+    fun alertFinished() {
+        liveState.value = liveState.value?.copy(hasFinished = true)
     }
 
     fun addListener(observer: Observer<MusicPlayerState>) {

@@ -56,6 +56,7 @@ class MusicPlayerService : Service() {
                 mSession?.next()
             }
             ACTION_EXIT -> {
+                mSession?.alertFinished()
                 mSession?.clearListeners()
                 mSession?.pause()
                 mWifiLock.releaseBecause("notification is being swiped away")
@@ -74,6 +75,10 @@ class MusicPlayerService : Service() {
 
     fun getSession(id: String): MusicSession? {
         return if (mSession?.id == id) mSession else null
+    }
+
+    fun getSession(): MusicSession? {
+        return mSession
     }
 
     fun createSession(id: String, songs: List<SongView>, currentIndex: Int): MusicSession {

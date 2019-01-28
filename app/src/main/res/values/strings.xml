@@ -32,4 +32,6 @@
     <string name="notification_player_channel_name">Player</string>
     <string name="notification_player_channel_description">Music player controls to pause, play or change current playing music</string>
 
+    <string name="song_album_name">%s &#9702; %s</string>
+
 </resources>
