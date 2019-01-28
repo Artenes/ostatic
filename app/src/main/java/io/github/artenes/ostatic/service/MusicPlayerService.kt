@@ -11,6 +11,7 @@ import android.util.Log
 import androidx.annotation.Nullable
 import androidx.lifecycle.Observer
 import io.github.artenes.ostatic.db.SongView
+import io.github.artenes.ostatic.view.AlbumActivity
 
 class MusicPlayerService : Service() {
 
@@ -21,6 +22,7 @@ class MusicPlayerService : Service() {
         const val ACTION_NEXT = "ACTION_NEXT"
         const val ACTION_PREVIOUS = "ACTION_PREVIOUS"
         const val ACTION_EXIT = "ACTION_EXIT"
+        const val ACTION_OPEN_ALBUM = "ACTION_OPEN_ALBUM"
 
         fun bind(context: Context, listener: ServiceConnection) {
             context.startService(Intent(context, MusicPlayerService::class.java))
@@ -54,6 +56,13 @@ class MusicPlayerService : Service() {
             }
             ACTION_NEXT -> {
                 mSession?.next()
+            }
+            ACTION_OPEN_ALBUM -> {
+                val state = mSession?.getCurrentState()
+                if (state != null) {
+                    val song = state.playlist[state.currentIndex]
+                    AlbumActivity.start(this, song.albumId)
+                }
             }
             ACTION_EXIT -> {
                 mSession?.alertFinished()
@@ -126,10 +135,11 @@ class WifiLock(context: Context) {
 
     }
 
-    private val lock = (context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager).createWifiLock(
-        WifiManager.WIFI_MODE_FULL,
-        WIFI_LOCK_NAME
-    )
+    private val lock =
+        (context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager).createWifiLock(
+            WifiManager.WIFI_MODE_FULL,
+            WIFI_LOCK_NAME
+        )
 
     fun acquireBecause(reason: String) {
         if (!lock.isHeld) {
