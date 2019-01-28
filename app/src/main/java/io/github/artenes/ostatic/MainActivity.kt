@@ -100,6 +100,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unbindService(this)
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_home -> changeToHomeTab()
