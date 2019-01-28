@@ -51,9 +51,6 @@ class HomeFragment : Fragment(), AlbumListAdapter.OnAlbumClickListener {
 
         adapter.setData(sections)
 
-        //delay by 1 second to give time to the view to render fully
-        delay(1000)
-
         view.content.visibility = View.VISIBLE
         view.progress.visibility = View.GONE
     }
