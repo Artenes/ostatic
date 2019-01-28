@@ -36,6 +36,7 @@ class MusicSession(playList: List<SongView>, currentIndex: Int, private val play
         player.setListener(this)
         player.prepare(playList, currentIndex)
         liveState.value = MusicPlayerState(false, false, playList.toList(), currentIndex)
+        player.pause()
     }
 
     fun addListener(observer: Observer<MusicPlayerState>) {
@@ -92,7 +93,7 @@ class MusicSession(playList: List<SongView>, currentIndex: Int, private val play
 
         if (playbackState == Player.STATE_READY) {
             liveState.value = liveState.value?.copy(isBuffering = false, isPlaying = playWhenReady, currentIndex = player.currentIndex())
-            Log.d(TAG, "Playing/Pause for position: ${player.currentIndex()}")
+            Log.d(TAG, "${if(playWhenReady) "playing" else "paused"} for position: ${player.currentIndex()}")
             return
         }
 
