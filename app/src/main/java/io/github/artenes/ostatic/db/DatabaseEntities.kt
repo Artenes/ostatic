@@ -92,7 +92,7 @@ data class TopAlbumView(
         const val NEXT_PAGE_ID = "NEXT_PAGE_ID"
 
         fun makeNextPageAlbum(id: String = "", name: String = "", title: String = ""): TopAlbumView {
-            return TopAlbumView(id, name, NEXT_PAGE_ID, title, "", 0, 0, "")
+            return TopAlbumView(id, name, NEXT_PAGE_ID, title, "", 0, 0, "android.resource://io.github.artenes.ostatic/drawable/more")
         }
 
     }

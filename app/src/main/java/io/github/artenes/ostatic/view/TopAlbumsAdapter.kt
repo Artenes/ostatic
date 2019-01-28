@@ -125,15 +125,15 @@ class AlbumListAdapter(val listener: OnAlbumClickListener, val isHighlight: Bool
         fun bind(album: TopAlbumView) {
             itemView.findViewById<TextView>(R.id.itemTitle).text = album.name
             val cover = itemView.findViewById<ImageView>(R.id.itemAlbumCover)
-            if (!album.cover.isNullOrEmpty()) {
-                Picasso.get()
-                    .load(album.cover)
-                    .resize(280, 280)
-                    .centerCrop()
-                    .into(cover)
-            } else {
-                cover.setImageDrawable(ColorDrawable(Color.WHITE))
-            }
+            val albumUrl =
+                if (album.cover.isNullOrEmpty()) "android.resource://io.github.artenes.ostatic/drawable/album" else album.cover
+            Picasso.get()
+                .load(albumUrl)
+                .resize(280, 280)
+                .centerCrop()
+                .placeholder(R.drawable.album)
+                .error(R.drawable.album)
+                .into(cover)
             itemView.setOnClickListener(this)
         }
 

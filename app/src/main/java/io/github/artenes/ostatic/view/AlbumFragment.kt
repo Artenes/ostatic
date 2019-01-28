@@ -92,13 +92,15 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
         view.albumSongs.text = getString(R.string.number_songs, album.files)
         adapter.setData(songs)
 
-        if (!album.cover.isNullOrEmpty()) {
-            Picasso.get()
-                .load(album.cover)
-                .into(view.albumCover)
-        } else {
-            view.albumCover.setImageDrawable(ColorDrawable(Color.WHITE))
-        }
+        val albumUrl =
+            if (album.cover.isNullOrEmpty()) "android.resource://io.github.artenes.ostatic/drawable/album" else album.cover
+        Picasso.get()
+            .load(albumUrl)
+            .resize(280, 280)
+            .centerCrop()
+            .placeholder(R.drawable.album)
+            .error(R.drawable.album)
+            .into(view.albumCover)
 
         view.songsList.visibility = View.VISIBLE
         view.playButton.visibility = View.VISIBLE

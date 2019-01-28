@@ -1,7 +1,5 @@
 package io.github.artenes.ostatic.view
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,15 +43,15 @@ class AlbumsAdapter(val listener: OnAlbumClickListener) : RecyclerView.Adapter<A
         fun bind(album: TopAlbumView) {
             itemView.albumTitle.text = album.name
             itemView.albumSongs.text = itemView.context.getString(R.string.number_songs, album.files)
-            if (!album.cover.isNullOrEmpty()) {
-                Picasso.get()
-                    .load(album.cover)
-                    .resize(120, 120)
-                    .centerCrop()
-                    .into(itemView.albumCover)
-            } else {
-                itemView.albumCover.setImageDrawable(ColorDrawable(Color.WHITE))
-            }
+            val albumUrl =
+                if (album.cover.isNullOrEmpty()) "android.resource://io.github.artenes.ostatic/drawable/album" else album.cover
+            Picasso.get()
+                .load(albumUrl)
+                .resize(120, 120)
+                .centerCrop()
+                .placeholder(R.drawable.album)
+                .error(R.drawable.album)
+                .into(itemView.albumCover)
             itemView.setOnClickListener(this)
         }
 
