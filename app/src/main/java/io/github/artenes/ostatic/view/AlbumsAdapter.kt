@@ -48,6 +48,8 @@ class AlbumsAdapter(val listener: OnAlbumClickListener) : RecyclerView.Adapter<A
             if (!album.cover.isNullOrEmpty()) {
                 Picasso.get()
                     .load(album.cover)
+                    .resize(120, 120)
+                    .centerCrop()
                     .into(itemView.albumCover)
             } else {
                 itemView.albumCover.setImageDrawable(ColorDrawable(Color.WHITE))

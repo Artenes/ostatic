@@ -128,6 +128,8 @@ class AlbumListAdapter(val listener: OnAlbumClickListener, val isHighlight: Bool
             if (!album.cover.isNullOrEmpty()) {
                 Picasso.get()
                     .load(album.cover)
+                    .resize(280, 280)
+                    .centerCrop()
                     .into(cover)
             } else {
                 cover.setImageDrawable(ColorDrawable(Color.WHITE))
