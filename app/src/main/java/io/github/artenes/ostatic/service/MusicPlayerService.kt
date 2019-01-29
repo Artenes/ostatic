@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.net.wifi.WifiManager
 import android.os.Binder
 import android.os.IBinder
+import android.os.PowerManager
 import android.util.Log
 import androidx.annotation.Nullable
 import androidx.lifecycle.Observer
@@ -37,13 +38,12 @@ class MusicPlayerService : Service() {
     private lateinit var mPlayer: MusicPlayer
     private lateinit var mNotification: PlayerNotification
     private var mSession: MusicSession? = null
-    private lateinit var mWifiLock: WifiLock
+    private lateinit var mWakeLock: WakeLock
 
     override fun onCreate() {
-        super.onCreate()
         mPlayer = MusicPlayer(this, "Ostatic/0.0.1")
         mNotification = PlayerNotification(this)
-        mWifiLock = WifiLock(this)
+        mWakeLock = WakeLock(this)
         Log.i(TAG, "Created music player service because some component needed to play some music")
     }
 
@@ -69,7 +69,7 @@ class MusicPlayerService : Service() {
                 mSession?.alertFinished()
                 mSession?.clearListeners()
                 mSession?.pause()
-                mWifiLock.releaseBecause("notification is being swiped away")
+                mWakeLock.releaseBecause("notification is being swiped away")
                 stopSelf()
             }
             else -> {
@@ -97,16 +97,18 @@ class MusicPlayerService : Service() {
         mSession = MusicSession(songs, currentIndex, mPlayer, id)
         mNotification.attachSession(mSession as MusicSession)
         mSession?.addListener(sessionListener)
-        mWifiLock.acquireBecause("a new session is being created")
+        mWakeLock.acquireBecause("a new session is being created")
         return mSession as MusicSession
     }
 
     override fun onDestroy() {
-        super.onDestroy()
+        Log.i(
+            TAG,
+            "The music player service is being destroyed because it is not in use or the system does not like it"
+        )
         mSession?.clearListeners()
         mSession?.pause()
         mPlayer.release()
-        Log.i(TAG, "The music player service is being destroyed because it is not in use or the system does not like it")
     }
 
     inner class MusicPlayerBinder : Binder() {
@@ -118,43 +120,57 @@ class MusicPlayerService : Service() {
 
     private val sessionListener = Observer<MusicPlayerState> {
         if (!it.isBuffering && !it.isPlaying) {
-            mWifiLock.releaseBecause("music has paused")
+            mWakeLock.releaseBecause("music has paused")
         }
 
         if (!it.isBuffering && it.isPlaying) {
-            mWifiLock.acquireBecause("music is playing")
+            mWakeLock.acquireBecause("music is playing")
         }
     }
 
 }
 
-class WifiLock(context: Context) {
+class WakeLock(context: Context) {
 
     companion object {
 
-        const val WIFI_LOCK_NAME = "io.github.artenes.ostatic.WIFI_LOCK"
-        const val TAG = "WifiLock"
+        const val WIFI_LOCK_NAME = "io.github.artenes.ostatic.BATTERY_WIFI_LOCK"
+        const val TAG = "WakeLock"
 
     }
 
-    private val lock =
+    private val wifiLock =
         (context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager).createWifiLock(
             WifiManager.WIFI_MODE_FULL,
             WIFI_LOCK_NAME
         )
 
-    fun acquireBecause(reason: String) {
-        if (!lock.isHeld) {
-            lock.acquire()
-            Log.d(TAG, "Acquired WIFI lock because $reason")
+    private val batteryLock = (context.applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager)
+        .newWakeLock(
+            PowerManager.PARTIAL_WAKE_LOCK or PowerManager.ON_AFTER_RELEASE,
+            MusicPlayerService::class.java.name
+        ).apply {
+            setReferenceCounted(false)
         }
+
+    fun acquireBecause(reason: String) {
+        if (!batteryLock.isHeld) {
+            batteryLock.acquire(10 * 60 * 1000L /*10 minutes*/)
+        }
+        if (!wifiLock.isHeld) {
+            wifiLock.acquire()
+        }
+        Log.d(TAG, "Acquired wakelock because $reason")
     }
 
     fun releaseBecause(reason: String) {
-        if (lock.isHeld) {
-            lock.release()
-            Log.d(TAG, "Released WIFI lock because $reason")
+        if (batteryLock.isHeld) {
+            batteryLock.release()
         }
+        if (wifiLock.isHeld) {
+            wifiLock.release()
+        }
+        Log.d(TAG, "Released wakelock because $reason")
     }
 
 }
