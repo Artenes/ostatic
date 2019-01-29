@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     fun showPlayerLoading() {
-        progressBar.visibility = View.VISIBLE
+        loadingSpinner.visibility = View.VISIBLE
         playPauseButton.visibility = View.GONE
     }
 
@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     fun togglePlayerStatus(playing: Boolean) {
-        progressBar.visibility = View.GONE
+        loadingSpinner.visibility = View.GONE
         playPauseButton.visibility = View.VISIBLE
         playPauseButton.setImageResource(if (playing) R.drawable.ic_pause else R.drawable.ic_play)
     }
