@@ -70,12 +70,13 @@ class MusicPlayerService : Service() {
                 mSession?.clearListeners()
                 mSession?.pause()
                 mWakeLock.releaseBecause("notification is being swiped away")
+                mSession = null
                 stopSelf()
             }
             else -> {
             }
         }
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     @Nullable

@@ -96,6 +96,9 @@ class PlayerNotification(val service: Service) {
 
     private val notificationObserver = Observer<MusicPlayerState> {
         if (it.hasFinished) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                service.stopForeground(true)
+            }
             return@Observer
         }
         val song = it.playlist[it.currentIndex]
