@@ -74,7 +74,7 @@ class MusicPlayerService : Service() {
             else -> {
             }
         }
-        return START_NOT_STICKY
+        return START_STICKY
     }
 
     @Nullable
