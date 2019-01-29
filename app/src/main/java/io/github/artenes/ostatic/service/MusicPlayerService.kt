@@ -149,28 +149,29 @@ class WakeLock(context: Context) {
         .newWakeLock(
             PowerManager.PARTIAL_WAKE_LOCK or PowerManager.ON_AFTER_RELEASE,
             MusicPlayerService::class.java.name
-        ).apply {
-            setReferenceCounted(false)
-        }
+        )
 
     fun acquireBecause(reason: String) {
         if (!batteryLock.isHeld) {
             batteryLock.acquire(10 * 60 * 1000L /*10 minutes*/)
+            Log.d(TAG, "Acquired battery lock because $reason ($batteryLock)")
         }
         if (!wifiLock.isHeld) {
             wifiLock.acquire()
+            Log.d(TAG, "Acquired wifi lock because $reason ($wifiLock)")
         }
-        Log.d(TAG, "Acquired wakelock because $reason")
     }
 
     fun releaseBecause(reason: String) {
         if (batteryLock.isHeld) {
             batteryLock.release()
+            Log.d(TAG, "Released battery lock because $reason ($batteryLock)")
         }
         if (wifiLock.isHeld) {
             wifiLock.release()
+            Log.d(TAG, "Released wifi lock because $reason ($wifiLock)")
         }
-        Log.d(TAG, "Released wakelock because $reason")
+
     }
 
 }
