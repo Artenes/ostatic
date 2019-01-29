@@ -2,6 +2,7 @@ package io.github.artenes.ostatic.service
 
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.Service
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -13,7 +14,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.Observer
 import io.github.artenes.ostatic.R
 
-class PlayerNotification(val context: Context) {
+class PlayerNotification(val service: Service) {
 
     companion object {
 
@@ -26,11 +27,11 @@ class PlayerNotification(val context: Context) {
         createChannel()
     }
 
-    private val manager = NotificationManagerCompat.from(context)
+    private val manager = NotificationManagerCompat.from(service)
 
-    val layout = RemoteViews(context.packageName, R.layout.notification_layout)
+    val layout = RemoteViews(service.packageName, R.layout.notification_layout)
 
-    private val builder = NotificationCompat.Builder(context, NOTIFICATION_ID).apply {
+    private val builder = NotificationCompat.Builder(service, NOTIFICATION_ID).apply {
 
         priority = NotificationCompat.PRIORITY_MAX
 
@@ -51,9 +52,9 @@ class PlayerNotification(val context: Context) {
 
     private fun createChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val res = context.resources
+            val res = service.resources
             Notification.createChannel(
-                context,
+                service,
                 NOTIFICATION_ID,
                 res.getString(R.string.notification_player_channel_name),
                 res.getString(R.string.notification_player_channel_description),
@@ -64,8 +65,8 @@ class PlayerNotification(val context: Context) {
 
     private fun createPendingIntent(action: String): PendingIntent {
         val intent = Intent(action)
-        intent.component = ComponentName(context, MusicPlayerService::class.java)
-        return PendingIntent.getService(context, 0, intent, 0)
+        intent.component = ComponentName(service, MusicPlayerService::class.java)
+        return PendingIntent.getService(service, 0, intent, 0)
     }
 
     private fun refreshState(musicTitle: String, albumName: String, isPlaying: Boolean, isBuffering: Boolean) {
@@ -81,6 +82,16 @@ class PlayerNotification(val context: Context) {
             layout.setImageViewResource(R.id.playPauseButton, if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play)
             builder.setOngoing(isPlaying)
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            service.startForeground(NOTIFICATION_SESSION_ID, builder.build())
+            if (!isPlaying && !isBuffering) {
+                service.stopForeground(false)
+            }
+        } else {
+            manager.notify(NOTIFICATION_SESSION_ID, builder.build())
+        }
+
     }
 
     private val notificationObserver = Observer<MusicPlayerState> {
@@ -89,7 +100,6 @@ class PlayerNotification(val context: Context) {
         }
         val song = it.playlist[it.currentIndex]
         refreshState(song.name, song.albumName, it.isPlaying, it.isBuffering)
-        manager.notify(NOTIFICATION_SESSION_ID, builder.build())
     }
 
 }
