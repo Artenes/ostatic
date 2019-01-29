@@ -44,6 +44,7 @@ class MusicPlayerService : Service() {
         mPlayer = MusicPlayer(this, "Ostatic/0.0.1")
         mNotification = PlayerNotification(this)
         mWifiLock = WifiLock(this)
+        Log.i(TAG, "Created music player service because some component needed to play some music")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -105,6 +106,7 @@ class MusicPlayerService : Service() {
         mSession?.clearListeners()
         mSession?.pause()
         mPlayer.release()
+        Log.i(TAG, "The music player service is being destroyed because it is not in use or the system does not like it")
     }
 
     inner class MusicPlayerBinder : Binder() {
