@@ -57,6 +57,8 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
         view.songsList.layoutManager = LinearLayoutManager(view.context)
         view.songsList.itemAnimator = null
         view.playButton.setOnClickListener(this)
+        view.nextButton.setOnClickListener(this)
+        view.previousButton.setOnClickListener(this)
         return view
     }
 
@@ -145,9 +147,17 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
     }
 
     override fun onClick(v: View?) {
-        if (v?.id == R.id.playButton) {
-            createNewSession(0)
-            musicSession?.playOrPause()
+        when(v?.id) {
+            R.id.playButton -> {
+                createNewSession(0)
+                musicSession?.playOrPause()
+            }
+            R.id.previousButton -> {
+                musicSession?.previous()
+            }
+            R.id.nextButton -> {
+                musicSession?.next()
+            }
         }
     }
 
@@ -161,6 +171,8 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
                 adapter.play(it.currentIndex)
                 view?.playButton?.isEnabled = true
                 view?.playButton?.text = getString(R.string.pause)
+                view?.nextButton?.visibility = View.VISIBLE
+                view?.previousButton?.visibility = View.VISIBLE
             }
             else -> {
                 view?.playButton?.isEnabled = true

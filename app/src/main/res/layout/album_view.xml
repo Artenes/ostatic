@@ -77,20 +77,38 @@
                     android:layout_height="?attr/actionBarSize"
                     app:layout_collapseMode="pin"/>
 
-            <Button
-                    android:id="@+id/playButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|center_horizontal"
-                    android:background="@drawable/button_shape"
-                    android:text="@string/play"
-                    android:textColor="@android:color/white"
-                    android:textAllCaps="true"
-                    app:layout_collapseMode="pin"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" android:visibility="visible"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                          android:orientation="horizontal" android:layout_gravity="bottom|center_horizontal"
+                          android:gravity="center">
+
+                <ImageView
+                        android:importantForAccessibility="no"
+                        android:layout_width="45dp"
+                        android:layout_height="match_parent" app:srcCompat="@drawable/ic_previous"
+                        android:id="@+id/previousButton"
+                        android:tint="@color/colorAccent"
+                        android:visibility="gone"/>
+
+                <Button
+                        android:id="@+id/playButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/button_shape"
+                        android:text="@string/play"
+                        android:textColor="@android:color/white"
+                        android:textAllCaps="true"
+                        app:layout_collapseMode="pin"
+                        android:visibility="visible"/>
+
+                <ImageView
+                        android:importantForAccessibility="no"
+                        android:layout_width="45dp"
+                        android:layout_height="match_parent" app:srcCompat="@drawable/ic_next"
+                        android:id="@+id/nextButton"
+                        android:tint="@color/colorAccent"
+                        android:visibility="gone"/>
+
+            </LinearLayout>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
