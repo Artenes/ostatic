@@ -4,51 +4,60 @@ import android.content.ComponentName
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
 import io.github.artenes.ostatic.service.MusicPlayerService
 import io.github.artenes.ostatic.service.MusicPlayerState
 import io.github.artenes.ostatic.service.MusicSession
-import io.github.artenes.ostatic.view.HomeFragment
-import io.github.artenes.ostatic.view.AboutFragment
-import io.github.artenes.ostatic.view.AlbumActivity
-import io.github.artenes.ostatic.view.SearchFragment
+import io.github.artenes.ostatic.view.AlbumFragment
+import io.github.artenes.ostatic.view.AlbumsFragment
 import kotlinx.android.synthetic.main.main_activity.*
 
-class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener, ServiceConnection, View.OnClickListener {
+class MainActivity : AppCompatActivity(), ServiceConnection, View.OnClickListener, MusicPlayerService.OnSessionChangedListener {
 
     var service: MusicPlayerService? = null
+    lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-        bottomNavigationView.setOnNavigationItemSelectedListener(this)
-        changeToHomeTab()
+
         MusicPlayerService.bind(this, this)
         songAndAlbumTitle.isSelected = true
         playPauseButton.setOnClickListener(this)
         songAndAlbumTitle.setOnClickListener(this)
+
+        navController = findNavController(R.id.content)
+        bottomNavigationView.setupWithNavController(navController)
     }
 
     override fun onResume() {
         super.onResume()
-        bindToCurrentSession(service?.getSession())
     }
 
-    fun changeToHomeTab() {
-        replaceFragment(HomeFragment())
+    fun openAllAlbumsFromHome(title: String, category: String) {
+        val bundle = bundleOf(AlbumsFragment.TITLE to title, AlbumsFragment.CATEGORY to category)
+        navController.navigate(R.id.action_homeFragment_to_albumsFragment, bundle)
     }
 
-    fun changeToSearchTab() {
-        replaceFragment(SearchFragment())
+    fun openAlbumFromHome(id: String) {
+        val bundle = bundleOf(AlbumFragment.ALBUM_ID to id)
+        navController.navigate(R.id.action_homeFragment_to_albumFragment, bundle)
     }
 
-    fun changeToAboutTab() {
-        replaceFragment(AboutFragment())
+    fun openAlbumFromList(id: String) {
+        val bundle = bundleOf(AlbumFragment.ALBUM_ID to id)
+        navController.navigate(R.id.action_albumsFragment_to_albumFragment, bundle)
+    }
+
+    fun openAlbumFromSearch(id: String) {
+        val bundle = bundleOf(AlbumFragment.ALBUM_ID to id)
+        navController.navigate(R.id.action_searchFragment_to_albumFragment, bundle)
     }
 
     fun showPlayerLoading() {
@@ -64,7 +73,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         val state = service?.getSession()?.getCurrentState()
         if (state != null) {
             val song = state.playlist[state.currentIndex]
-            AlbumActivity.start(this, song.albumId)
+            val bundle = bundleOf(AlbumFragment.ALBUM_ID to song.albumId)
+            navController.navigate(R.id.albumFragment, bundle)
         }
     }
 
@@ -103,23 +113,12 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     override fun onDestroy() {
         super.onDestroy()
         unbindService(this)
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_home -> changeToHomeTab()
-            R.id.action_search -> changeToSearchTab()
-            R.id.action_about -> changeToAboutTab()
-        }
-        return true
-    }
-
-    private fun replaceFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().replace(R.id.content, fragment).commit()
+        this.service?.mSessionListener = null
     }
 
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
         this.service = (service as MusicPlayerService.MusicPlayerBinder).service
+        this.service?.mSessionListener = this
         bindToCurrentSession(this.service?.getSession())
     }
 
@@ -142,7 +141,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     override fun onClick(v: View?) {
-        when(v?.id) {
+        when (v?.id) {
             R.id.playPauseButton -> playPauseMusic()
             R.id.songAndAlbumTitle -> openAlbum()
         }
@@ -150,6 +149,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     override fun onServiceDisconnected(name: ComponentName?) {
         //do nothing
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp()
+    }
+
+    override fun onSessionChanged(session: MusicSession) {
+        bindToCurrentSession(session)
     }
 
 }

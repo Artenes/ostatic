@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.github.artenes.ostatic.MainActivity
 import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.R
 import io.github.artenes.ostatic.db.TopAlbumView
@@ -31,6 +32,15 @@ class SearchFragment : Fragment(), TextView.OnEditorActionListener, AlbumsAdapte
         view.resultList.layoutManager = LinearLayoutManager(requireContext())
         view.progressBar.visibility = View.GONE
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        //navigation component keep the state of the adapter
+        //so if it is not empty, refresh the state of the UI
+        if (!adapter.albums.isEmpty()) {
+            showResults(adapter.albums.toList())
+        }
     }
 
     fun search(query: String) = scope.launch {
@@ -69,7 +79,7 @@ class SearchFragment : Fragment(), TextView.OnEditorActionListener, AlbumsAdapte
     }
 
     fun openAlbum(albumId: String) {
-        AlbumActivity.start(requireContext(), albumId)
+        (requireActivity() as MainActivity).openAlbumFromSearch(albumId)
     }
 
     override fun onDestroy() {

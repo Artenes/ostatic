@@ -2,9 +2,6 @@ package io.github.artenes.ostatic.view
 
 import android.content.ComponentName
 import android.content.ServiceConnection
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import io.github.artenes.ostatic.R
 import android.os.Bundle
 import android.os.IBinder
 import android.view.LayoutInflater
@@ -16,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.squareup.picasso.Picasso
 import io.github.artenes.ostatic.OstaticApplication
+import io.github.artenes.ostatic.R
 import io.github.artenes.ostatic.db.SongView
 import io.github.artenes.ostatic.service.MusicPlayerService
 import io.github.artenes.ostatic.service.MusicPlayerState
@@ -27,18 +25,12 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
 
     companion object {
 
-        fun make(id: String): AlbumFragment {
-            val fragment = AlbumFragment()
-            val bundle = Bundle()
-            bundle.putString(AlbumActivity.ALBUM_ID, id)
-            fragment.arguments = bundle
-            return fragment
-        }
+        const val ALBUM_ID = "ALBUM_ID"
 
     }
 
     val id: String by lazy {
-        arguments?.getString(AlbumActivity.ALBUM_ID) ?: ""
+        arguments?.getString(ALBUM_ID) ?: ""
     }
 
     val repo = OstaticApplication.REPOSITORY
@@ -147,7 +139,7 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
     }
 
     override fun onClick(v: View?) {
-        when(v?.id) {
+        when (v?.id) {
             R.id.playButton -> {
                 createNewSession(0)
                 musicSession?.playOrPause()

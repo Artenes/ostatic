@@ -23,12 +23,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".view.AlbumsActivity" android:screenOrientation="portrait"
-                  android:parentActivityName=".MainActivity"/>
-
-        <activity android:name=".view.AlbumActivity" android:theme="@style/AppTheme.NotActionBar"
-                  android:screenOrientation="portrait" android:launchMode="singleTop"/>
-
         <service android:name=".service.MusicPlayerService" android:exported="false"/>
 
     </application>

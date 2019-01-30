@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/main_nav_graph" app:startDestination="@id/homeFragment">
+
+    <fragment android:id="@+id/homeFragment" android:name="io.github.artenes.ostatic.view.HomeFragment"
+              android:label="HomeFragment" tools:layout="@layout/preload_list">
+        <action android:id="@+id/action_homeFragment_to_albumsFragment" app:destination="@id/albumsFragment"/>
+        <action android:id="@+id/action_homeFragment_to_albumFragment" app:destination="@id/albumFragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/searchFragment" android:name="io.github.artenes.ostatic.view.SearchFragment"
+              android:label="SearchFragment" tools:layout="@layout/search_fragment">
+        <action android:id="@+id/action_searchFragment_to_albumFragment" app:destination="@id/albumFragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/aboutFragment" android:name="io.github.artenes.ostatic.view.AboutFragment"
+              android:label="AboutFragment"/>
+
+    <fragment android:id="@+id/albumsFragment" android:name="io.github.artenes.ostatic.view.AlbumsFragment"
+              android:label="AlbumsFragment" tools:layout="@layout/list">
+        <argument android:name="category" app:argType="string"/>
+        <argument android:name="title" app:argType="string"/>
+        <action android:id="@+id/action_albumsFragment_to_albumFragment" app:destination="@id/albumFragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/albumFragment" android:name="io.github.artenes.ostatic.view.AlbumFragment"
+              android:label="AlbumFragment" tools:layout="@layout/album_view">
+        <argument android:name="albumId" app:argType="string"/>
+    </fragment>
+
+</navigation>

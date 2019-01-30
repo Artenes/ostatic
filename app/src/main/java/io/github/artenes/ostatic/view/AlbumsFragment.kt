@@ -5,12 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.github.artenes.ostatic.MainActivity
 import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.R
-import io.github.artenes.ostatic.db.ApplicationDatabase
 import io.github.artenes.ostatic.db.TopAlbumView
+import kotlinx.android.synthetic.main.album_view.view.*
 import kotlinx.android.synthetic.main.preload_list.view.*
 import kotlinx.coroutines.*
 
@@ -19,18 +21,11 @@ class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
     companion object {
 
         const val CATEGORY = "CATEGORY"
+        const val TITLE = "TITLE"
         const val TOP_40 = "TOP_40"
         const val TOP_ALL = "TOP_ALL"
         const val TOP_LAST = "TOP_LAST"
         const val TOP_NEWLY = "TOP_NEWLY"
-
-        fun make(category: String): AlbumsFragment {
-            val fragment = AlbumsFragment()
-            val bundle = Bundle()
-            bundle.putString(CATEGORY, category)
-            fragment.arguments = bundle
-            return fragment
-        }
 
     }
 
@@ -59,6 +54,14 @@ class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        val activity = this.activity as AppCompatActivity
+
+        activity.setSupportActionBar(view?.toolbar)
+        activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        activity.supportActionBar?.setHomeButtonEnabled(true)
+        activity.supportActionBar?.title = ""
+
         loadAndBind()
     }
 
@@ -85,7 +88,7 @@ class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
     }
 
     override fun onAlbumClicked(album: TopAlbumView) {
-        AlbumActivity.start(requireContext(), album.id)
+        (requireActivity() as MainActivity).openAlbumFromList(album.id)
     }
 
     override fun onDestroy() {

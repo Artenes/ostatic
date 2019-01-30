@@ -7,9 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.github.artenes.ostatic.MainActivity
 import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.R
-import io.github.artenes.ostatic.db.ApplicationDatabase
 import io.github.artenes.ostatic.db.TopAlbumView
 
 import kotlinx.android.synthetic.main.preload_list.view.*
@@ -58,9 +58,9 @@ class HomeFragment : Fragment(), AlbumListAdapter.OnAlbumClickListener {
     override fun onAlbumClick(album: TopAlbumView) {
         //work around to use what exists already
         if (album.size == TopAlbumView.NEXT_PAGE_ID) {
-            AlbumsActivity.start(requireContext(), album.added, album.id)
+            (requireActivity() as MainActivity).openAllAlbumsFromHome(album.added, album.id)
         } else {
-            AlbumActivity.start(requireContext(), album.id)
+            (requireActivity() as MainActivity).openAlbumFromHome(album.id)
         }
     }
 

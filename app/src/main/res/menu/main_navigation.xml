@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="@string/home" android:id="@+id/action_home" android:icon="@drawable/ic_home"
+    <item android:title="@string/home" android:id="@+id/homeFragment" android:icon="@drawable/ic_home"
           android:visible="true"/>
-    <item android:title="@string/search" android:id="@+id/action_search" android:icon="@drawable/ic_search"
+    <item android:title="@string/search" android:id="@+id/searchFragment" android:icon="@drawable/ic_search"
           android:visible="true"/>
-    <item android:title="@string/about" android:id="@+id/action_about" android:icon="@drawable/ic_about"
+    <item android:title="@string/about" android:id="@+id/aboutFragment" android:icon="@drawable/ic_about"
           android:visible="true"/>
 </menu>

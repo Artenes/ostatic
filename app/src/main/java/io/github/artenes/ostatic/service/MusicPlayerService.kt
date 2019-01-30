@@ -12,9 +12,14 @@ import android.util.Log
 import androidx.annotation.Nullable
 import androidx.lifecycle.Observer
 import io.github.artenes.ostatic.db.SongView
-import io.github.artenes.ostatic.view.AlbumActivity
 
 class MusicPlayerService : Service() {
+
+    interface OnSessionChangedListener {
+
+        fun onSessionChanged(session: MusicSession)
+
+    }
 
     companion object {
 
@@ -39,6 +44,7 @@ class MusicPlayerService : Service() {
     private lateinit var mNotification: PlayerNotification
     private var mSession: MusicSession? = null
     private lateinit var mWakeLock: WakeLock
+    var mSessionListener: OnSessionChangedListener? = null
 
     override fun onCreate() {
         mPlayer = MusicPlayer(this, "Ostatic/0.0.1")
@@ -62,7 +68,7 @@ class MusicPlayerService : Service() {
                 val state = mSession?.getCurrentState()
                 if (state != null) {
                     val song = state.playlist[state.currentIndex]
-                    AlbumActivity.start(this, song.albumId)
+                    //@TODO add deeplink to open album fragment
                 }
             }
             ACTION_EXIT -> {
@@ -99,6 +105,7 @@ class MusicPlayerService : Service() {
         mNotification.attachSession(mSession as MusicSession)
         mSession?.addListener(sessionListener)
         mWakeLock.acquireBecause("a new session is being created")
+        mSessionListener?.onSessionChanged(mSession as MusicSession)
         return mSession as MusicSession
     }
 
