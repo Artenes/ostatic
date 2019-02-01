@@ -1,10 +1,13 @@
 package io.github.artenes.ostatic.db
 
 import android.content.Context
+import io.github.artenes.ostatic.api.JsoupHtmlDocumentReader
+import io.github.artenes.ostatic.api.KhinsiderRepository
 
 class ApplicationRepository(context: Context) {
 
     private val db: ApplicationDatabase = ApplicationDatabase.getInstance(context)
+    private val khRepo: KhinsiderRepository = KhinsiderRepository(JsoupHtmlDocumentReader())
 
     suspend fun getTop40(limit: Int = 40): List<TopAlbumView> {
         return db.albumDao().getTop40(limit)
@@ -30,8 +33,11 @@ class ApplicationRepository(context: Context) {
         return db.albumDao().getSongs(id)
     }
 
-    suspend fun searchAlbum(query: String): List<TopAlbumView> {
-        return db.albumDao().searchAlbums("%$query%")
+    fun searchAlbum(query: String): List<TopAlbumView> {
+        val results = khRepo.searchAlbums(query)
+        return results.map {
+            TopAlbumView(it.id, it.name, "", "", "", 0, 0, it.cover)
+        }
     }
 
 }
