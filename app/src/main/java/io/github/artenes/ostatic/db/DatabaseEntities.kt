@@ -21,25 +21,25 @@ data class Top40Entity(
 )
 
 @Entity(tableName = "top_100_all_time")
-data class Top100AllTime(
+data class Top100AllTimeEntity(
     @PrimaryKey var album_id: String,
     var position: Int
 )
 
 @Entity(tableName = "top_100_last_6_months")
-data class Top100Last6Months(
+data class Top100Last6MonthsEntity(
     @PrimaryKey var album_id: String,
     var position: Int
 )
 
 @Entity(tableName = "top_100_newly_added")
-data class Top100NewlyAdded(
+data class Top100NewlyAddedEntity(
     @PrimaryKey var album_id: String,
     var position: Int
 )
 
 @Entity(tableName = "covers")
-data class Covers(
+data class CoverEntity(
     @PrimaryKey var id: Int,
     var album_id: String,
     var url: String
