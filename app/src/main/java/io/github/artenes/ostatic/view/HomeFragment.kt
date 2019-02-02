@@ -81,7 +81,7 @@ class HomeFragment : Fragment(), AlbumListAdapter.OnAlbumClickListener {
                 getString(R.string.top_40_soundtracks),
                 getString(R.string.top_40_soundtracks_subtitle),
                 top40,
-                true
+                false
             )
         )
 

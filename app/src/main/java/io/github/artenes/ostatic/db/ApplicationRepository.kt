@@ -5,6 +5,7 @@ import android.util.Log
 import io.github.artenes.ostatic.api.JsoupHtmlDocumentReader
 import io.github.artenes.ostatic.api.KhinsiderRepository
 import io.github.artenes.ostatic.model.Album
+import io.github.artenes.ostatic.model.TopAlbums
 
 class ApplicationRepository(context: Context) {
 
@@ -19,19 +20,19 @@ class ApplicationRepository(context: Context) {
     private val mp3LinksCache: MutableMap<String, String> = mutableMapOf()
 
     suspend fun getTop40(limit: Int = 40): List<TopAlbumView> {
-        return db.albumDao().getTop40(limit)
+        return getTopAlbum("top_40", TopAlbums.TOP_40, limit)
     }
 
     suspend fun getTop100AllTime(limit: Int = 100): List<TopAlbumView> {
-        return db.albumDao().getTop100AllTime(limit)
+        return getTopAlbum("top_all_time", TopAlbums.ALL_TIME, limit)
     }
 
     suspend fun getTop100Last6Months(limit: Int = 100): List<TopAlbumView> {
-        return db.albumDao().getTop100Last6Months(limit)
+        return getTopAlbum("top_6_months", TopAlbums.LAST_SIX_MOTHS, limit)
     }
 
     suspend fun getTop100NewlyAdded(limit: Int = 100): List<TopAlbumView> {
-        return db.albumDao().getTop100NewlyAdded(limit)
+        return getTopAlbum("top_newly_added", TopAlbums.NEWLY_ADDED, limit)
     }
 
     suspend fun getAlbum(id: String): AlbumView {
@@ -106,6 +107,25 @@ class ApplicationRepository(context: Context) {
             Log.d(TAG, "Fetching song $songId from cache")
         }
         return url as String
+    }
+
+    private suspend fun getTopAlbum(localType: String, remoteType: TopAlbums, limit: Int): List<TopAlbumView> {
+        val albums: List<TopAlbumEntity> = db.albumDao().getTopAlbums(localType, limit)
+
+        if (!albums.isEmpty()) {
+            return albums.map { TopAlbumView(it.id, it.name, "", "", "", 0, 0, it.cover) }
+        }
+
+        val remoteAlbumsList = khRepo.getTopAlbums(remoteType)
+
+        for (remoteAlbum in remoteAlbumsList) {
+            val cover = if (remoteAlbum.cover.isNullOrEmpty()) "" else remoteAlbum.cover
+            db.albumDao().insertTopAlbum(TopAlbumEntity(remoteAlbum.id, remoteAlbum.name, cover, localType))
+        }
+
+        return remoteAlbumsList.take(limit).map {
+            TopAlbumView(it.id, it.name, "", "", "", 0, 0, it.cover)
+        }
     }
 
 }

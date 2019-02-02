@@ -36,6 +36,12 @@ interface AlbumDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCover(cover: CoverEntity)
 
+    @Query("select * from top_albums where type = :type limit :limit")
+    suspend fun getTopAlbums(type: String, limit: Int = 100): List<TopAlbumEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTopAlbum(topAlbum: TopAlbumEntity)
+
     @Query("update songs set url = :url where id = :id")
     fun updateSongMp3UrlNonSuspend(id: String, url: String)
 

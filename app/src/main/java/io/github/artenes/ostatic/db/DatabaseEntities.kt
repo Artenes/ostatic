@@ -3,6 +3,7 @@ package io.github.artenes.ostatic.db
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.*
 
 @Entity(tableName = "albums")
 data class AlbumEntity(
@@ -12,6 +13,15 @@ data class AlbumEntity(
     var added: String,
     var time: String,
     var files: Int
+)
+
+@Entity(tableName = "top_albums")
+data class TopAlbumEntity(
+    var id: String,
+    var name: String,
+    var cover: String,
+    var type: String,
+    @PrimaryKey var uuid: String = UUID.randomUUID().toString()
 )
 
 @Entity(tableName = "top_40")

@@ -9,7 +9,7 @@ import io.github.artenes.ostatic.OstaticApplication
 @Database(
     version = 1,
     entities = [AlbumEntity::class, Top40Entity::class, Top100AllTimeEntity::class, Top100Last6MonthsEntity::class,
-        Top100NewlyAddedEntity::class, CoverEntity::class, SongEntity::class]
+        Top100NewlyAddedEntity::class, CoverEntity::class, SongEntity::class, TopAlbumEntity::class]
 )
 abstract class ApplicationDatabase : RoomDatabase() {
 
