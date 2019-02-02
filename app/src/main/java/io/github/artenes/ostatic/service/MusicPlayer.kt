@@ -51,7 +51,14 @@ class MusicSession(playList: List<SongView>, currentIndex: Int, private val play
     init {
         player.setListener(this)
         player.prepare(playList, currentIndex)
-        liveState.value = MusicPlayerState(false, false, playList.toList(), currentIndex)
+        liveState.value = MusicPlayerState(
+            false,
+            false,
+            playList.toList(),
+            currentIndex,
+            repeatMode = player.getRepeatMode(),
+            isRandomMode = player.isInRandomMode()
+        )
         player.pause()
     }
 
@@ -216,7 +223,7 @@ class MusicPlayer(context: Context, userAgent: String) {
     }
 
     fun toggleRepeatMode() {
-        when(player.repeatMode) {
+        when (player.repeatMode) {
             Player.REPEAT_MODE_OFF -> player.repeatMode = Player.REPEAT_MODE_ALL
             Player.REPEAT_MODE_ALL -> player.repeatMode = Player.REPEAT_MODE_ONE
             else -> player.repeatMode = Player.REPEAT_MODE_OFF
