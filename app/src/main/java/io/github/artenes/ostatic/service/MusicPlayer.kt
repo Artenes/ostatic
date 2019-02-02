@@ -20,7 +20,9 @@ data class MusicPlayerState(
     val isBuffering: Boolean,
     val playlist: List<SongView>,
     val currentIndex: Int,
-    val hasFinished: Boolean = false
+    val hasFinished: Boolean = false,
+    val repeatMode: Int = Player.REPEAT_MODE_OFF,
+    val isRandomMode: Boolean = false
 ) {
 
     fun currentSong(): SongView {
@@ -98,6 +100,16 @@ class MusicSession(playList: List<SongView>, currentIndex: Int, private val play
 
     fun seekTo(time: Long) {
         player.seekTo(time)
+    }
+
+    fun toggleRepeatMode() {
+        player.toggleRepeatMode()
+        liveState.value = liveState.value?.copy(repeatMode = player.getRepeatMode())
+    }
+
+    fun toggleRandomMode() {
+        player.toggleRandomMode()
+        liveState.value = liveState.value?.copy(isRandomMode = player.isInRandomMode())
     }
 
     override fun onTracksChanged(trackGroups: TrackGroupArray?, trackSelections: TrackSelectionArray?) {
@@ -188,6 +200,26 @@ class MusicPlayer(context: Context, userAgent: String) {
             player.playWhenReady = true
         } else {
             playOrPause()
+        }
+    }
+
+    fun getRepeatMode(): Int {
+        return player.repeatMode
+    }
+
+    fun isInRandomMode(): Boolean {
+        return player.shuffleModeEnabled
+    }
+
+    fun toggleRandomMode() {
+        player.shuffleModeEnabled = !player.shuffleModeEnabled
+    }
+
+    fun toggleRepeatMode() {
+        when(player.repeatMode) {
+            Player.REPEAT_MODE_OFF -> player.repeatMode = Player.REPEAT_MODE_ALL
+            Player.REPEAT_MODE_ALL -> player.repeatMode = Player.REPEAT_MODE_ONE
+            else -> player.repeatMode = Player.REPEAT_MODE_OFF
         }
     }
 

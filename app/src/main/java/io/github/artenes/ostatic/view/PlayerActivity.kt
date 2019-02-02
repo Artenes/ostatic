@@ -7,6 +7,7 @@ import android.os.IBinder
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import com.google.android.exoplayer2.Player
 import com.squareup.picasso.Picasso
 import io.github.artenes.ostatic.R
 import io.github.artenes.ostatic.loadAlbumCover
@@ -26,17 +27,42 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
         playPause.setOnClickListener(this)
         next.setOnClickListener(this)
         previous.setOnClickListener(this)
+        repeat.setOnClickListener(this)
+        shuffle.setOnClickListener(this)
     }
 
     fun bind(state: MusicPlayerState) {
         val song = state.currentSong()
+
         songTitle.text = song.name
         albumTitle.text = song.albumName
         bufferingSong.visibility = if (state.isBuffering) View.VISIBLE else View.GONE
         playPause.setImageResource(if (state.isPlaying) R.drawable.ic_pause else R.drawable.ic_play)
+
         //avoid loading multiple times
         if (albumCover.tag != true) {
             Picasso.get().loadAlbumCover(song.albumCover, albumCover)
+        }
+
+        if (state.isRandomMode) {
+            shuffle.alpha = 1f
+        } else {
+            shuffle.alpha = 0.5f
+        }
+
+        when(state.repeatMode) {
+            Player.REPEAT_MODE_ALL -> {
+                repeat.setImageResource(R.drawable.ic_repeat)
+                repeat.alpha = 1f
+            }
+            Player.REPEAT_MODE_ONE -> {
+                repeat.setImageResource(R.drawable.ic_repeat_one)
+                repeat.alpha = 1f
+            }
+            else -> {
+                repeat.setImageResource(R.drawable.ic_repeat);
+                repeat.alpha = 0.5f
+            }
         }
     }
 
@@ -45,6 +71,8 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
             R.id.playPause -> service.getSession()?.playOrPause()
             R.id.next -> service.getSession()?.next()
             R.id.previous -> service.getSession()?.previous()
+            R.id.repeat -> service.getSession()?.toggleRepeatMode()
+            R.id.shuffle -> service.getSession()?.toggleRandomMode()
         }
     }
 
