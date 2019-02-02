@@ -21,7 +21,11 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <nav-graph android:value="@navigation/main_nav_graph"/>
         </activity>
+
+        <activity android:name=".view.PlayerActivity" android:screenOrientation="portrait"
+                  android:theme="@style/AppTheme.NotActionBar"/>
 
         <service android:name=".service.MusicPlayerService" android:exported="false"/>
 

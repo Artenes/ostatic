@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Binder
 import android.os.IBinder
@@ -11,6 +12,7 @@ import android.os.PowerManager
 import android.util.Log
 import androidx.annotation.Nullable
 import androidx.lifecycle.Observer
+import io.github.artenes.ostatic.MainActivity
 import io.github.artenes.ostatic.db.SongView
 
 class MusicPlayerService : Service() {
@@ -67,8 +69,9 @@ class MusicPlayerService : Service() {
             ACTION_OPEN_ALBUM -> {
                 val state = mSession?.getCurrentState()
                 if (state != null) {
-                    val song = state.playlist[state.currentIndex]
-                    //@TODO add deeplink to open album fragment
+                    val albumIntent = Intent(this, MainActivity::class.java)
+                    albumIntent.data = Uri.parse("https://ostatic.artenes.github.io/player")
+                    startActivity(albumIntent)
                 }
             }
             ACTION_EXIT -> {

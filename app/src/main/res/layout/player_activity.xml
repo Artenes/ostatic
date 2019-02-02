@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent"
+android:background="@drawable/gradient_radial_center_background">
+
+    <androidx.appcompat.widget.Toolbar
+            android:layout_width="0dp"
+            android:layout_height="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            android:id="@+id/toolbar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ImageView
+            android:layout_width="0dp"
+            android:layout_height="300dp" tools:srcCompat="@tools:sample/avatars"
+            android:id="@+id/albumCover" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="32dp" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="32dp"
+            app:layout_constraintHorizontal_bias="0.0" android:layout_marginTop="32dp"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            android:importantForAccessibility="no"/>
+    <TextView
+            style="@style/TextTitle"
+            tools:text="Bombon Battlefield"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/songTitle" android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/albumCover" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="32dp" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="32dp"/>
+    <TextView
+            style="@style/TextSubTitle"
+            tools:text="Super Mario 64"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/albumTitle" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/songTitle" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="32dp" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="32dp"/>
+    <SeekBar
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/seekBar" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            android:layout_marginBottom="32dp" app:layout_constraintBottom_toTopOf="@+id/playPause"
+            android:alpha="0.5" android:progress="50" android:visibility="invisible"/>
+    <ImageView
+            android:layout_width="@dimen/icon_small_size"
+            android:layout_height="@dimen/icon_small_size" app:srcCompat="@drawable/ic_random"
+            android:id="@+id/shuffle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/previous"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintTop_toTopOf="@+id/previous"
+            android:importantForAccessibility="no" android:alpha="0.5" android:visibility="invisible"/>
+    <ImageView
+            android:layout_width="@dimen/icon_large_size"
+            android:layout_height="@dimen/icon_large_size" app:srcCompat="@drawable/ic_previous"
+            android:id="@+id/previous"
+            app:layout_constraintStart_toEndOf="@+id/shuffle"
+            android:layout_marginBottom="24dp" app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/playPause"
+            android:importantForAccessibility="no"/>
+    <ImageView
+            android:layout_width="@dimen/icon_large_size"
+            android:layout_height="@dimen/icon_large_size" app:srcCompat="@drawable/ic_play"
+            android:id="@+id/playPause" app:layout_constraintStart_toEndOf="@+id/previous"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toStartOf="@+id/next"
+            android:importantForAccessibility="no"/>
+    <ImageView
+            android:layout_width="@dimen/icon_large_size"
+            android:layout_height="@dimen/icon_large_size" app:srcCompat="@drawable/ic_next"
+            android:id="@+id/next" app:layout_constraintStart_toEndOf="@+id/playPause"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toStartOf="@+id/repeat"
+            android:importantForAccessibility="no"/>
+    <ImageView
+            android:layout_width="@dimen/icon_small_size"
+            android:layout_height="@dimen/icon_small_size" app:srcCompat="@drawable/ic_repeat"
+            android:id="@+id/repeat"
+            app:layout_constraintStart_toEndOf="@+id/next"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp" android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintTop_toTopOf="@+id/next"
+            android:importantForAccessibility="no" android:alpha="0.5" android:visibility="invisible"/>
+    <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/bufferingSong" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/albumTitle" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/seekBar" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

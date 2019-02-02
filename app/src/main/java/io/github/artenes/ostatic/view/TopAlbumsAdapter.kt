@@ -1,8 +1,6 @@
 package io.github.artenes.ostatic.view
 
-import android.graphics.Color
 import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

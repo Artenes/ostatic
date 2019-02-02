@@ -1,6 +1,7 @@
 package io.github.artenes.ostatic
 
 import android.content.ComponentName
+import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
@@ -16,9 +17,11 @@ import io.github.artenes.ostatic.service.MusicPlayerState
 import io.github.artenes.ostatic.service.MusicSession
 import io.github.artenes.ostatic.view.AlbumFragment
 import io.github.artenes.ostatic.view.AlbumsFragment
+import io.github.artenes.ostatic.view.PlayerActivity
 import kotlinx.android.synthetic.main.main_activity.*
 
-class MainActivity : AppCompatActivity(), ServiceConnection, View.OnClickListener, MusicPlayerService.OnSessionChangedListener {
+class MainActivity : AppCompatActivity(), ServiceConnection, View.OnClickListener,
+    MusicPlayerService.OnSessionChangedListener {
 
     var service: MusicPlayerService? = null
     lateinit var navController: NavController
@@ -34,10 +37,6 @@ class MainActivity : AppCompatActivity(), ServiceConnection, View.OnClickListene
 
         navController = findNavController(R.id.content)
         bottomNavigationView.setupWithNavController(navController)
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     fun openAllAlbumsFromHome(title: String, category: String) {
@@ -69,13 +68,8 @@ class MainActivity : AppCompatActivity(), ServiceConnection, View.OnClickListene
         service?.getSession()?.playOrPause()
     }
 
-    fun openAlbum() {
-        val state = service?.getSession()?.getCurrentState()
-        if (state != null) {
-            val song = state.playlist[state.currentIndex]
-            val bundle = bundleOf(AlbumFragment.ALBUM_ID to song.albumId)
-            navController.navigate(R.id.albumFragment, bundle)
-        }
+    fun openPlayer() {
+        startActivity(Intent(this, PlayerActivity::class.java))
     }
 
     fun togglePlayerStatus(playing: Boolean) {
@@ -143,7 +137,7 @@ class MainActivity : AppCompatActivity(), ServiceConnection, View.OnClickListene
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.playPauseButton -> playPauseMusic()
-            R.id.songAndAlbumTitle -> openAlbum()
+            R.id.songAndAlbumTitle -> openPlayer()
         }
     }
 
@@ -157,6 +151,13 @@ class MainActivity : AppCompatActivity(), ServiceConnection, View.OnClickListene
 
     override fun onSessionChanged(session: MusicSession) {
         bindToCurrentSession(session)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        val isToOpenPlayer = intent?.data?.toString()?.equals("https://ostatic.artenes.github.io/player") ?: false
+        if (isToOpenPlayer) {
+            openPlayer()
+        }
     }
 
 }

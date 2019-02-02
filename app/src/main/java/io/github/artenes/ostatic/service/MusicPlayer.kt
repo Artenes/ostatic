@@ -20,7 +20,13 @@ data class MusicPlayerState(
     val playlist: List<SongView>,
     val currentIndex: Int,
     val hasFinished: Boolean = false
-)
+) {
+
+    fun currentSong(): SongView {
+        return playlist[currentIndex]
+    }
+
+}
 
 class MusicSession(playList: List<SongView>, currentIndex: Int, private val player: MusicPlayer, val id: String) :
     Player.EventListener {

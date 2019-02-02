@@ -8,6 +8,7 @@
               android:label="HomeFragment" tools:layout="@layout/preload_list">
         <action android:id="@+id/action_homeFragment_to_albumsFragment" app:destination="@id/albumsFragment"/>
         <action android:id="@+id/action_homeFragment_to_albumFragment" app:destination="@id/albumFragment"/>
+        <action android:id="@+id/action_homeFragment_to_playerActivity2" app:destination="@id/playerActivity2"/>
     </fragment>
 
     <fragment android:id="@+id/searchFragment" android:name="io.github.artenes.ostatic.view.SearchFragment"
@@ -29,5 +30,9 @@
               android:label="AlbumFragment" tools:layout="@layout/album_view">
         <argument android:name="albumId" app:argType="string"/>
     </fragment>
+    <activity android:id="@+id/playerActivity2" android:name="io.github.artenes.ostatic.view.PlayerActivity"
+              android:label="PlayerActivity">
+        <deepLink android:id="@+id/deepLink2" app:uri="https://ostatic.artenes.github.io/player"/>
+    </activity>
 
 </navigation>
