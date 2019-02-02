@@ -12,6 +12,7 @@ import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import io.github.artenes.ostatic.OstaticApplication
+import io.github.artenes.ostatic.db.AlbumView
 import io.github.artenes.ostatic.db.SongView
 
 data class MusicPlayerState(
@@ -24,6 +25,11 @@ data class MusicPlayerState(
 
     fun currentSong(): SongView {
         return playlist[currentIndex]
+    }
+
+    fun currentAlbum(): AlbumView {
+        val song = currentSong()
+        return AlbumView(song.albumId, song.albumName, "", "", "", 0, song.albumCover)
     }
 
 }

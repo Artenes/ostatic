@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.squareup.picasso.Picasso
 import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.R
+import io.github.artenes.ostatic.db.AlbumView
 import io.github.artenes.ostatic.db.SongView
 import io.github.artenes.ostatic.service.MusicPlayerService
 import io.github.artenes.ostatic.service.MusicPlayerState
@@ -101,8 +102,6 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
         view.progressBar.visibility = View.GONE
 
         MusicPlayerService.bind(requireContext(), this@AlbumFragment)
-
-        repo.markAsRecent(album)
     }
 
     override fun onDestroy() {
@@ -121,8 +120,11 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
     private fun createNewSession(position: Int) {
         musicSession = service.getSession(id)
         if (musicSession == null) {
-            musicSession = service.createSession(id, adapter.songs, position)
-            musicSession?.addListener(musicStateObserver)
+            val session = service.createSession(id, adapter.songs, position)
+            session.addListener(musicStateObserver)
+            val state = session.getCurrentState() as MusicPlayerState
+            scope.launch { repo.markAsRecent(state.currentAlbum()) }
+            musicSession = session
         }
     }
 
