@@ -75,12 +75,12 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
         view.playButton.visibility = View.GONE
         view.progressBar.visibility = View.VISIBLE
 
-        val album = withContext(Dispatchers.IO) {
-            repo.getAlbum(id)
+        val albumAndSongs = withContext(Dispatchers.IO) {
+            repo.getAlbumAndSongs(id)
         }
-        val songs = withContext(Dispatchers.IO) {
-            repo.getSongs(id)
-        }
+
+        val album = albumAndSongs.first
+        val songs = albumAndSongs.second
 
         view.albumTitle.text = album.name
         view.albumSongs.text = getString(R.string.number_songs, album.files)

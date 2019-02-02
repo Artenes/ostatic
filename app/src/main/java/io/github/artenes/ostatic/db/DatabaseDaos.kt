@@ -1,7 +1,10 @@
 package io.github.artenes.ostatic.db
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.google.android.material.circularreveal.CircularRevealHelper
 
 @Dao
 interface AlbumDao {
@@ -26,5 +29,14 @@ interface AlbumDao {
 
     @Query("select 0 as position, id, name, files, size, added, time, (select url from covers where covers.album_id = albums.id limit 1) as cover from albums where name like :query order by name ASC")
     suspend fun searchAlbums(query: String): List<TopAlbumView>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAlbum(album: AlbumEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSong(song: SongEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCover(cover: CoverEntity)
 
 }
