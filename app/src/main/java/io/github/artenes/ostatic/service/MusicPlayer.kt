@@ -11,6 +11,7 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
+import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.db.SongView
 
 data class MusicPlayerState(
@@ -40,7 +41,7 @@ class MusicSession(playList: List<SongView>, currentIndex: Int, private val play
         player.pause()
     }
 
-    fun getCurrentState():MusicPlayerState? {
+    fun getCurrentState(): MusicPlayerState? {
         return liveState.value
     }
 
@@ -88,26 +89,36 @@ class MusicSession(playList: List<SongView>, currentIndex: Int, private val play
     }
 
     override fun onTracksChanged(trackGroups: TrackGroupArray?, trackSelections: TrackSelectionArray?) {
-        liveState.value = liveState.value?.copy(isBuffering = false, isPlaying = player.isPlaying(), currentIndex = player.currentIndex())
+        liveState.value = liveState.value?.copy(
+            isBuffering = false,
+            isPlaying = player.isPlaying(),
+            currentIndex = player.currentIndex()
+        )
         Log.d(TAG, "Changed to position: ${player.currentIndex()}")
     }
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
 
         if (playbackState == Player.STATE_BUFFERING) {
-            liveState.value = liveState.value?.copy(isBuffering = true, isPlaying = false, currentIndex = player.currentIndex())
+            liveState.value =
+                    liveState.value?.copy(isBuffering = true, isPlaying = false, currentIndex = player.currentIndex())
             Log.d(TAG, "Buffering for position: ${player.currentIndex()}")
             return
         }
 
         if (playbackState == Player.STATE_READY) {
-            liveState.value = liveState.value?.copy(isBuffering = false, isPlaying = playWhenReady, currentIndex = player.currentIndex())
-            Log.d(TAG, "${if(playWhenReady) "playing" else "paused"} for position: ${player.currentIndex()}")
+            liveState.value = liveState.value?.copy(
+                isBuffering = false,
+                isPlaying = playWhenReady,
+                currentIndex = player.currentIndex()
+            )
+            Log.d(TAG, "${if (playWhenReady) "playing" else "paused"} for position: ${player.currentIndex()}")
             return
         }
 
         if (playbackState == Player.STATE_ENDED) {
-            liveState.value = liveState.value?.copy(isBuffering = false, isPlaying = false, currentIndex = player.currentIndex())
+            liveState.value =
+                    liveState.value?.copy(isBuffering = false, isPlaying = false, currentIndex = player.currentIndex())
             Log.d(TAG, "Ended in position: ${player.currentIndex()}")
             return
         }
@@ -145,8 +156,15 @@ class MusicPlayer(context: Context, userAgent: String) {
     fun prepare(playList: List<SongView>, currentIndex: Int) {
         val mediaSources = ConcatenatingMediaSource()
         for (song in playList) {
-            val uri = Uri.parse(song.url)
-            mediaSources.addMediaSource(ExtractorMediaSource.Factory(sourceFactory).createMediaSource(uri))
+            val uri = if (song.url.isEmpty()) UrlUpdatingDataSource.makeNoSongUri(song.id) else Uri.parse(song.url)
+            mediaSources.addMediaSource(
+                ExtractorMediaSource.Factory(
+                    UrlUpdatingDataSource.Factory(
+                        sourceFactory,
+                        OstaticApplication.REPOSITORY
+                    )
+                ).createMediaSource(uri)
+            )
         }
         player.prepare(mediaSources)
         player.seekTo(currentIndex, 0)

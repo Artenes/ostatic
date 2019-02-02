@@ -1,9 +1,6 @@
 package io.github.artenes.ostatic.db
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.google.android.material.circularreveal.CircularRevealHelper
 
 @Dao
@@ -38,5 +35,8 @@ interface AlbumDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCover(cover: CoverEntity)
+
+    @Query("update songs set url = :url where id = :id")
+    fun updateSongMp3UrlNonSuspend(id: String, url: String)
 
 }

@@ -1,14 +1,22 @@
 package io.github.artenes.ostatic.db
 
 import android.content.Context
+import android.util.Log
 import io.github.artenes.ostatic.api.JsoupHtmlDocumentReader
 import io.github.artenes.ostatic.api.KhinsiderRepository
 import io.github.artenes.ostatic.model.Album
 
 class ApplicationRepository(context: Context) {
 
+    companion object {
+
+        const val TAG = "ApplicationRepository"
+
+    }
+
     private val db: ApplicationDatabase = ApplicationDatabase.getInstance(context)
     private val khRepo: KhinsiderRepository = KhinsiderRepository(JsoupHtmlDocumentReader())
+    private val mp3LinksCache: MutableMap<String, String> = mutableMapOf()
 
     suspend fun getTop40(limit: Int = 40): List<TopAlbumView> {
         return db.albumDao().getTop40(limit)
@@ -84,6 +92,20 @@ class ApplicationRepository(context: Context) {
         return results.map {
             TopAlbumView(it.id, it.name, "", "", "", 0, 0, it.cover)
         }
+    }
+
+    fun getSongMp3Url(songId: String): String {
+        var url: String? = mp3LinksCache[songId]
+        if (url == null) {
+            Log.d(TAG, "Fetching song $songId from KHInsider")
+            url = khRepo.getMp3LinkForSong(songId)
+            db.albumDao().updateSongMp3UrlNonSuspend(songId, url)
+            Log.d(TAG, "Updated song $songId on database")
+            mp3LinksCache[songId] = url
+        } else {
+            Log.d(TAG, "Fetching song $songId from cache")
+        }
+        return url as String
     }
 
 }
