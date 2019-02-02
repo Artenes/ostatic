@@ -88,6 +88,19 @@ class ApplicationRepository(context: Context) {
 
     }
 
+    suspend fun markAsRecent(album: AlbumView) {
+        val exists = db.albumDao().getTopAlbum(album.id, "top_recent") != null
+        if (!exists) {
+            db.albumDao().markAsRecent(TopAlbumEntity(album.id, album.name,album.cover ?: "","top_recent"))
+        }
+    }
+
+    suspend fun getRecentAlbums(limit: Int): List<TopAlbumView> {
+        return db.albumDao().getRecentAlbums(limit).map {
+            TopAlbumView(it.id, it.name, "", "", "", 0, 0, it.cover)
+        }
+    }
+
     fun searchAlbum(query: String): List<TopAlbumView> {
         val results = khRepo.searchAlbums(query)
         return results.map {

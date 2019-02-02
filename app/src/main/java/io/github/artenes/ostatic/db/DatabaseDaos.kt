@@ -1,7 +1,9 @@
 package io.github.artenes.ostatic.db
 
-import androidx.room.*
-import com.google.android.material.circularreveal.CircularRevealHelper
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 
 @Dao
 interface AlbumDao {
@@ -39,8 +41,17 @@ interface AlbumDao {
     @Query("select * from top_albums where type = :type limit :limit")
     suspend fun getTopAlbums(type: String, limit: Int = 100): List<TopAlbumEntity>
 
+    @Query("select * from top_albums where id = :id and type = :type")
+    suspend fun getTopAlbum(id: String, type: String): TopAlbumEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTopAlbum(topAlbum: TopAlbumEntity)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun markAsRecent(album: TopAlbumEntity)
+
+    @Query("select * from top_albums where type = 'top_recent' order by rowid desc limit :limit")
+    suspend fun getRecentAlbums(limit: Int): List<TopAlbumEntity>
 
     @Query("update songs set url = :url where id = :id")
     fun updateSongMp3UrlNonSuspend(id: String, url: String)

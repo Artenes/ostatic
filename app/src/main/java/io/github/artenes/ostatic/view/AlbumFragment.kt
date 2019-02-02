@@ -101,6 +101,8 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
         view.progressBar.visibility = View.GONE
 
         MusicPlayerService.bind(requireContext(), this@AlbumFragment)
+
+        repo.markAsRecent(album)
     }
 
     override fun onDestroy() {

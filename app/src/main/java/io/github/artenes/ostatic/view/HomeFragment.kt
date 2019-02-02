@@ -74,6 +74,21 @@ class HomeFragment : Fragment(), AlbumListAdapter.OnAlbumClickListener {
         val sections = mutableListOf<AlbumSection>()
         val limit = 7
 
+        val topRecent = repo.getRecentAlbums(limit).toMutableList()
+        if (topRecent.isNotEmpty()) {
+            if (topRecent.size == limit) {
+                topRecent.add(TopAlbumView.makeNextPageAlbum(AlbumsFragment.TOP_RECENT, getString(R.string.all_albums), getString(R.string.top_recent_soundtracks)))
+            }
+            sections.add(
+                AlbumSection(
+                    getString(R.string.top_recent_soundtracks),
+                    getString(R.string.top_recent_soundtracks_subtitle),
+                    topRecent,
+                    false
+                )
+            )
+        }
+
         val top40 = repo.getTop40(limit).toMutableList()
         top40.add(TopAlbumView.makeNextPageAlbum(AlbumsFragment.TOP_40, getString(R.string.all_albums), getString(R.string.top_40_soundtracks)))
         sections.add(

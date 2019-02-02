@@ -26,6 +26,7 @@ class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
         const val TOP_ALL = "TOP_ALL"
         const val TOP_LAST = "TOP_LAST"
         const val TOP_NEWLY = "TOP_NEWLY"
+        const val TOP_RECENT = "TOP_RECENT"
 
     }
 

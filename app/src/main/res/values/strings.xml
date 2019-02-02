@@ -22,6 +22,9 @@
     <string name="top_all_soundtracks">All time top 100 soundtracks</string>
     <string name="top_all_soundtracks_subtitle">Best game songs of all time</string>
 
+    <string name="top_recent_soundtracks">Recent soundtrack</string>
+    <string name="top_recent_soundtracks_subtitle">soundtracks you were listening to</string>
+
     <string name="all_albums">All albums</string>
 
     <string name="number_songs">%d songs</string>
