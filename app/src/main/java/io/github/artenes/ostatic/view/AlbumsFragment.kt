@@ -30,12 +30,17 @@ class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
 
     }
 
-
     val job = Job()
     val scope = CoroutineScope(Dispatchers.Main + job)
+
     val category by lazy {
         val args = arguments as Bundle
         args.getString(CATEGORY)
+    }
+
+    val title by lazy {
+        val args = arguments as Bundle
+        args.getString(TITLE)
     }
 
     val repo = OstaticApplication.REPOSITORY
@@ -61,7 +66,7 @@ class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
         activity.setSupportActionBar(view?.toolbar)
         activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         activity.supportActionBar?.setHomeButtonEnabled(true)
-        activity.supportActionBar?.title = ""
+        activity.supportActionBar?.title = title
 
         loadAndBind()
     }
@@ -78,6 +83,7 @@ class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
                 TOP_ALL -> repo.getTop100AllTime()
                 TOP_LAST -> repo.getTop100Last6Months()
                 TOP_NEWLY -> repo.getTop100NewlyAdded()
+                TOP_RECENT -> repo.getRecentAlbums()
                 else -> emptyList()
             }
         }

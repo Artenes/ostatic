@@ -95,7 +95,7 @@ class ApplicationRepository(context: Context) {
         }
     }
 
-    suspend fun getRecentAlbums(limit: Int): List<TopAlbumView> {
+    suspend fun getRecentAlbums(limit: Int = 100): List<TopAlbumView> {
         return db.albumDao().getRecentAlbums(limit).map {
             TopAlbumView(it.id, it.name, "", "", "", 0, 0, it.cover)
         }
