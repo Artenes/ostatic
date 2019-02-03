@@ -13,9 +13,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" android:inputType="textPersonName"
             android:hint="@string/search_by_game_title"
-            android:imeOptions="actionSearch">
-        <requestFocus/>
-    </EditText>
+            android:imeOptions="actionSearch"/>
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/resultList"
