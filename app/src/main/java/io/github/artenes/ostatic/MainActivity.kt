@@ -124,6 +124,10 @@ class MainActivity : AppCompatActivity(), ServiceConnection, View.OnClickListene
                 repo.getSongs(albumId)
         }
 
+        if (songs.isEmpty()) {
+            return@launch
+        }
+
         service?.createSession(albumId, songs, songIndex)
     }
 
