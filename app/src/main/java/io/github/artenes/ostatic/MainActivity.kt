@@ -17,14 +17,21 @@ import io.github.artenes.ostatic.service.MusicPlayerState
 import io.github.artenes.ostatic.service.MusicSession
 import io.github.artenes.ostatic.view.AlbumFragment
 import io.github.artenes.ostatic.view.AlbumsFragment
+import io.github.artenes.ostatic.view.FavoriteSongsFragment
 import io.github.artenes.ostatic.view.PlayerActivity
 import kotlinx.android.synthetic.main.main_activity.*
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity(), ServiceConnection, View.OnClickListener,
     MusicPlayerService.OnSessionChangedListener {
 
     var service: MusicPlayerService? = null
     lateinit var navController: NavController
+
+    private val job = Job()
+    private val scope = CoroutineScope(Dispatchers.Main + job)
+    private val preferences = OstaticApplication.PREFERENCES
+    private val repo = OstaticApplication.REPOSITORY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,9 +108,29 @@ class MainActivity : AppCompatActivity(), ServiceConnection, View.OnClickListene
         divider.visibility = View.VISIBLE
     }
 
+    private fun restoreLatestSessionIfAvailable() = scope.launch {
+        val lastSession = preferences.getLastSessionData()
+        val albumId = lastSession.first
+        val songIndex = lastSession.second
+
+        if (albumId.isEmpty()) {
+            return@launch
+        }
+
+        val songs = withContext(Dispatchers.IO) {
+            if (albumId == FavoriteSongsFragment.FAVORITE_SONGS_SESSION)
+                repo.getFavoriteSongs()
+            else
+                repo.getSongs(albumId)
+        }
+
+        service?.createSession(albumId, songs, songIndex)
+    }
+
     fun bindToCurrentSession(session: MusicSession?) {
         if (session == null) {
             hidePlayer()
+            restoreLatestSessionIfAvailable()
         } else {
             session.addListener(musicStateObserver)
             showPlayer()
@@ -114,6 +141,7 @@ class MainActivity : AppCompatActivity(), ServiceConnection, View.OnClickListene
         super.onDestroy()
         unbindService(this)
         this.service?.mSessionListener = null
+        job.cancel()
     }
 
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {

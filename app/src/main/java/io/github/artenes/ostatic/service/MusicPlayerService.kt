@@ -13,6 +13,7 @@ import android.util.Log
 import androidx.annotation.Nullable
 import androidx.lifecycle.Observer
 import io.github.artenes.ostatic.MainActivity
+import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.db.SongView
 
 class MusicPlayerService : Service() {
@@ -137,6 +138,8 @@ class MusicPlayerService : Service() {
         if (!it.isBuffering && it.isPlaying) {
             mWakeLock.acquireBecause("music is playing")
         }
+
+        OstaticApplication.PREFERENCES.saveCurrentSession(mSession?.id ?: "", it.currentIndex)
     }
 
 }

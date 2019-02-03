@@ -23,7 +23,7 @@ class FavoriteSongsFragment : Fragment(), ServiceConnection, FavoriteSongsAdapte
 
     companion object {
 
-        private const val FAVORITE_SONGS_SESSION = "FAVORITE_SONGS"
+        const val FAVORITE_SONGS_SESSION = "FAVORITE_SONGS"
 
     }
 
