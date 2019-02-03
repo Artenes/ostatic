@@ -3,7 +3,9 @@ package io.github.artenes.ostatic.service
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.ServiceConnection
+import android.media.AudioManager
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Binder
@@ -42,6 +44,7 @@ class MusicPlayerService : Service() {
 
     }
 
+    private val mNoisyReceiver: BecomingNoisyReceiver = BecomingNoisyReceiver(this)
     private val mBinder = MusicPlayerBinder()
     private lateinit var mPlayer: MusicPlayer
     private lateinit var mNotification: PlayerNotification
@@ -133,10 +136,12 @@ class MusicPlayerService : Service() {
     private val sessionListener = Observer<MusicPlayerState> {
         if (!it.isBuffering && !it.isPlaying) {
             mWakeLock.releaseBecause("music has paused")
+            mNoisyReceiver.unregister()
         }
 
         if (!it.isBuffering && it.isPlaying) {
             mWakeLock.acquireBecause("music is playing")
+            mNoisyReceiver.register()
         }
 
         OstaticApplication.PREFERENCES.saveCurrentSession(mSession?.id ?: "", it.currentIndex)
