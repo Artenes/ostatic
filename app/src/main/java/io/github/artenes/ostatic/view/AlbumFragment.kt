@@ -14,13 +14,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.squareup.picasso.Picasso
 import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.R
-import io.github.artenes.ostatic.db.AlbumView
 import io.github.artenes.ostatic.db.SongView
 import io.github.artenes.ostatic.service.MusicPlayerService
 import io.github.artenes.ostatic.service.MusicPlayerState
 import io.github.artenes.ostatic.service.MusicSession
 import kotlinx.android.synthetic.main.album_view.view.*
-import kotlinx.android.synthetic.main.player_activity.*
 import kotlinx.coroutines.*
 
 class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickListener, View.OnClickListener {

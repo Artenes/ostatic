@@ -110,6 +110,11 @@ class ApplicationRepository(context: Context) {
         return db.albumDao().getFavoriteAlbums().reversed()
     }
 
+    suspend fun getFavoriteSongs(): List<SongView> {
+        //reversed to show the most recent first
+        return db.albumDao().getFavoriteSongs().reversed()
+    }
+
     suspend fun getFavorite(id: String): FavoriteEntity? {
         return db.albumDao().getFavorite(id)
     }

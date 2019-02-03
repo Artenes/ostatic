@@ -31,6 +31,9 @@ class FavoriteAlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
         view.mainList.layoutManager = LinearLayoutManager(context)
         view.mainList.adapter = adapter
 
+        view.noFavorites.text = getString(R.string.no_favorite_songs_yet)
+        view.noFavorites.setCompoundDrawables(null, resources.getDrawable(R.drawable.ic_music_note, null), null, null)
+
         return view
     }
 
