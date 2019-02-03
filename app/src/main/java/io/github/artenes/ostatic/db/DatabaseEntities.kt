@@ -66,6 +66,13 @@ data class SongEntity(
     @ColumnInfo(name="album_id") var albumId: String
 )
 
+@Entity(tableName = "favorites")
+data class FavoriteEntity(
+    @ColumnInfo(name= "entity_id") val entityId: String,
+    val type: String,
+    @PrimaryKey val uuid: String = UUID.randomUUID().toString()
+)
+
 data class AlbumView(
     var id: String,
     var name: String,

@@ -105,6 +105,19 @@ class ApplicationRepository(context: Context) {
         }
     }
 
+    suspend fun getFavorite(id: String): FavoriteEntity? {
+        return db.albumDao().getFavorite(id)
+    }
+
+    suspend fun toggleFavorite(id: String, type: String) {
+        val favorite = db.albumDao().getFavorite(id)
+        if (favorite == null) {
+            db.albumDao().insertFavorite(FavoriteEntity(id, type))
+        } else {
+            db.albumDao().removeFavorite(favorite)
+        }
+    }
+
     fun searchAlbum(query: String): List<TopAlbumView> {
         val results = khRepo.searchAlbums(query) ?: return emptyList()
         return results.map {

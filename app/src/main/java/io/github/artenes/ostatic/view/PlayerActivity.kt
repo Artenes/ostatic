@@ -9,16 +9,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.google.android.exoplayer2.Player
 import com.squareup.picasso.Picasso
+import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.R
 import io.github.artenes.ostatic.loadAlbumCover
 import io.github.artenes.ostatic.service.MusicPlayerService
 import io.github.artenes.ostatic.service.MusicPlayerState
 import io.github.artenes.ostatic.service.MusicSession
 import kotlinx.android.synthetic.main.player_activity.*
+import kotlinx.coroutines.*
 
 class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListener {
 
     lateinit var service: MusicPlayerService
+
+    private val job = Job()
+    private val scope = CoroutineScope(Dispatchers.Main + job)
+    private val repo = OstaticApplication.REPOSITORY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +35,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
         previous.setOnClickListener(this)
         repeat.setOnClickListener(this)
         shuffle.setOnClickListener(this)
+        favorite.setOnClickListener(this)
     }
 
     fun bind(state: MusicPlayerState) {
@@ -57,7 +64,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
             shuffle.alpha = 0.5f
         }
 
-        when(state.repeatMode) {
+        when (state.repeatMode) {
             Player.REPEAT_MODE_ALL -> {
                 repeat.setImageResource(R.drawable.ic_repeat)
                 repeat.alpha = 1f
@@ -71,15 +78,41 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
                 repeat.alpha = 0.5f
             }
         }
+
+        bindFavorite(song.id)
+    }
+
+    fun bindFavorite(id: String) = scope.launch {
+        val isFavorite = withContext(Dispatchers.IO) {
+            repo.getFavorite(id) != null
+        }
+        favorite.setImageResource(if (isFavorite) R.drawable.ic_favorite else R.drawable.ic_favorite_not)
+        favorite.tag = isFavorite
+    }
+
+    fun toggleFavorite() = scope.launch {
+        val id = service.getSession()?.getCurrentState()?.currentSong()?.id ?: return@launch
+        withContext(Dispatchers.IO) {
+            repo.toggleFavorite(id, "song")
+        }
+        val isFavorite = favorite.tag == true
+        if (isFavorite) {
+            favorite.setImageResource(R.drawable.ic_favorite_not)
+            favorite.tag = false
+        } else {
+            favorite.setImageResource(R.drawable.ic_favorite)
+            favorite.tag = true
+        }
     }
 
     override fun onClick(v: View?) {
-        when(v?.id) {
+        when (v?.id) {
             R.id.playPause -> service.getSession()?.playOrPause()
             R.id.next -> service.getSession()?.next()
             R.id.previous -> service.getSession()?.previous()
             R.id.repeat -> service.getSession()?.toggleRepeatMode()
             R.id.shuffle -> service.getSession()?.toggleRandomMode()
+            R.id.favorite -> toggleFavorite()
         }
     }
 
