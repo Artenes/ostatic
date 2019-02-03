@@ -16,7 +16,7 @@ android:background="@drawable/gradient_radial_center_background">
 
     <ImageView
             android:layout_width="0dp"
-            android:layout_height="300dp" tools:srcCompat="@tools:sample/avatars"
+            android:layout_height="200dp" tools:srcCompat="@tools:sample/avatars"
             android:id="@+id/albumCover" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="32dp" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="32dp"

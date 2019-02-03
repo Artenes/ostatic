@@ -17,7 +17,6 @@ import io.github.artenes.ostatic.service.MusicPlayerState
 import io.github.artenes.ostatic.service.MusicSession
 import kotlinx.android.synthetic.main.player_activity.*
 import kotlinx.coroutines.*
-import java.text.NumberFormat
 
 class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListener {
 
