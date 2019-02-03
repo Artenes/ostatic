@@ -102,7 +102,7 @@ class ApplicationRepository(context: Context) {
     }
 
     fun searchAlbum(query: String): List<TopAlbumView> {
-        val results = khRepo.searchAlbums(query)
+        val results = khRepo.searchAlbums(query) ?: return emptyList()
         return results.map {
             TopAlbumView(it.id, it.name, "", "", "", 0, 0, it.cover)
         }
