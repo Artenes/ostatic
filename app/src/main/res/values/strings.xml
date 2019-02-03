@@ -45,4 +45,6 @@
 
     <string name="loading_top_albums">loading top albums…</string>
 
+    <string name="start_time">00:00</string>
+
 </resources>

@@ -17,6 +17,7 @@ import io.github.artenes.ostatic.service.MusicPlayerState
 import io.github.artenes.ostatic.service.MusicSession
 import kotlinx.android.synthetic.main.player_activity.*
 import kotlinx.coroutines.*
+import java.text.NumberFormat
 
 class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListener {
 
@@ -36,6 +37,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
         repeat.setOnClickListener(this)
         shuffle.setOnClickListener(this)
         favorite.setOnClickListener(this)
+        seekBar.isEnabled = false
     }
 
     fun bind(state: MusicPlayerState) {
@@ -43,6 +45,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
 
         songTitle.text = song.name
         albumTitle.text = song.albumName
+        songEndTime.text = song.time.padStart(5, '0')
         playPause.setImageResource(if (state.isPlaying) R.drawable.ic_pause else R.drawable.ic_play)
 
         if (state.isBuffering) {
