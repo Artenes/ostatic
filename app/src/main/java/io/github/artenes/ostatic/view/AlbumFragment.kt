@@ -20,6 +20,7 @@ import io.github.artenes.ostatic.service.MusicPlayerService
 import io.github.artenes.ostatic.service.MusicPlayerState
 import io.github.artenes.ostatic.service.MusicSession
 import kotlinx.android.synthetic.main.album_view.view.*
+import kotlinx.android.synthetic.main.player_activity.*
 import kotlinx.coroutines.*
 
 class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickListener, View.OnClickListener {
@@ -52,6 +53,7 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
         view.playButton.setOnClickListener(this)
         view.nextButton.setOnClickListener(this)
         view.previousButton.setOnClickListener(this)
+        view.favorite.setOnClickListener(this)
         return view
     }
 
@@ -75,9 +77,14 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
         view.songsList.visibility = View.GONE
         view.playButton.visibility = View.GONE
         view.progressBar.visibility = View.VISIBLE
+        view.favorite.visibility = View.GONE
 
         val albumAndSongs = withContext(Dispatchers.IO) {
             repo.getAlbumAndSongs(id)
+        }
+
+        val isFavorite = withContext(Dispatchers.IO) {
+            repo.getFavorite(id) != null
         }
 
         val album = albumAndSongs.first
@@ -100,8 +107,26 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
         view.songsList.visibility = View.VISIBLE
         view.playButton.visibility = View.VISIBLE
         view.progressBar.visibility = View.GONE
+        view.favorite.visibility = View.VISIBLE
+
+        view.favorite.setImageResource(if (isFavorite) R.drawable.ic_favorite else R.drawable.ic_favorite_not)
+        view.favorite.tag = isFavorite
 
         MusicPlayerService.bind(requireContext(), this@AlbumFragment)
+    }
+
+    fun toggleFavorite() = scope.launch {
+        withContext(Dispatchers.IO) {
+            repo.toggleFavorite(id, "album")
+        }
+        val isFavorite = view?.favorite?.tag == true
+        if (isFavorite) {
+            view?.favorite?.setImageResource(R.drawable.ic_favorite_not)
+            view?.favorite?.tag = false
+        } else {
+            view?.favorite?.setImageResource(R.drawable.ic_favorite)
+            view?.favorite?.tag = true
+        }
     }
 
     override fun onDestroy() {
@@ -153,6 +178,9 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
             }
             R.id.nextButton -> {
                 musicSession?.next()
+            }
+            R.id.favorite -> {
+                toggleFavorite()
             }
         }
     }
