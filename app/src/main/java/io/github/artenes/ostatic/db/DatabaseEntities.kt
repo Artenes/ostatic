@@ -21,6 +21,7 @@ data class TopAlbumEntity(
     var name: String,
     var cover: String,
     var type: String,
+    @ColumnInfo(name = "updated_at") var updatedAt: Long = Calendar.getInstance().timeInMillis,
     @PrimaryKey var uuid: String = UUID.randomUUID().toString()
 )
 

@@ -6,6 +6,7 @@ import io.github.artenes.ostatic.api.JsoupHtmlDocumentReader
 import io.github.artenes.ostatic.api.KhinsiderRepository
 import io.github.artenes.ostatic.model.Album
 import io.github.artenes.ostatic.model.TopAlbums
+import java.util.*
 
 class ApplicationRepository(context: Context) {
 
@@ -89,9 +90,12 @@ class ApplicationRepository(context: Context) {
     }
 
     suspend fun markAsRecent(album: AlbumView) {
-        val exists = db.albumDao().getTopAlbum(album.id, "top_recent") != null
-        if (!exists) {
+        val recentAlbum = db.albumDao().getTopAlbum(album.id, "top_recent")
+        if (recentAlbum == null) {
             db.albumDao().markAsRecent(TopAlbumEntity(album.id, album.name,album.cover ?: "","top_recent"))
+        } else {
+            recentAlbum.updatedAt = Calendar.getInstance().timeInMillis
+            db.albumDao().updateTopAlbum(recentAlbum)
         }
     }
 
