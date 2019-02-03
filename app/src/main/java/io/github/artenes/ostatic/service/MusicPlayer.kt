@@ -21,7 +21,7 @@ data class MusicPlayerState(
     val playlist: List<SongView>,
     val currentIndex: Int,
     val hasFinished: Boolean = false,
-    val repeatMode: Int = Player.REPEAT_MODE_OFF,
+    val repeatMode: Int = Player.REPEAT_MODE_ALL,
     val isRandomMode: Boolean = false
 ) {
 
@@ -178,6 +178,10 @@ class MusicPlayer(context: Context, userAgent: String) {
 
     private val player: SimpleExoPlayer = ExoPlayerFactory.newSimpleInstance(context)
     private val sourceFactory: DefaultHttpDataSourceFactory = DefaultHttpDataSourceFactory(userAgent)
+
+    init {
+        player.repeatMode = Player.REPEAT_MODE_ALL
+    }
 
     fun setListener(listener: Player.EventListener) {
         player.removeListener(listener)
