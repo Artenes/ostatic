@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity(), ServiceConnection, View.OnClickListene
                 repo.getSongs(albumId)
         }
 
-        if (songs.isEmpty()) {
+        if (songs.isEmpty() || songIndex < 0 || songIndex >= songs.size) {
             return@launch
         }
 
