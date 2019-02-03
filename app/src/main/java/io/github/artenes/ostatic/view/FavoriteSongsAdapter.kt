@@ -112,7 +112,7 @@ class FavoriteSongsAdapter(val listener: OnSongClickListener) :
                 }
             } else {
                 itemView.stateIcon.setImageDrawable(resources.getDrawable(R.drawable.ic_play, null))
-                itemView.stateIcon.visibility = View.VISIBLE
+                itemView.stateIcon.visibility = View.GONE
                 itemView.progressBar.visibility = View.GONE
                 itemView.background = null
             }

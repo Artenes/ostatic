@@ -79,10 +79,7 @@ class FavoriteSongsFragment : Fragment(), ServiceConnection, FavoriteSongsAdapte
 
     override fun onResume() {
         super.onResume()
-        //if the session changed while we were out, reset the state of the list
-        if (service?.getSession(FAVORITE_SONGS_SESSION) == null) {
-            loadAndBind()
-        }
+        loadAndBind()
     }
 
     override fun onDestroy() {
@@ -99,12 +96,8 @@ class FavoriteSongsFragment : Fragment(), ServiceConnection, FavoriteSongsAdapte
     }
 
     private fun createNewSession(position: Int) {
-        musicSession = service?.getSession(FAVORITE_SONGS_SESSION)
-        if (musicSession == null) {
-            val session = service?.createSession(FAVORITE_SONGS_SESSION, adapter.songs, position)
-            session?.addListener(musicStateObserver)
-            musicSession = session
-        }
+        val session = service?.createSession(FAVORITE_SONGS_SESSION, adapter.songs, position)
+        musicSession = session
     }
 
     override fun onSongClick(position: Int, song: SongView) {
@@ -121,7 +114,7 @@ class FavoriteSongsFragment : Fragment(), ServiceConnection, FavoriteSongsAdapte
         musicSession?.removeListener(musicStateObserver)
     }
 
-    val musicStateObserver = Observer<MusicPlayerState> {
+    private val musicStateObserver = Observer<MusicPlayerState> {
         when {
             it.isBuffering -> {
                 adapter.buffer(it.currentIndex)
