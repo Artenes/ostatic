@@ -1,6 +1,7 @@
 package io.github.artenes.ostatic.view
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,8 +32,9 @@ class FavoriteAlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
         view.mainList.layoutManager = LinearLayoutManager(context)
         view.mainList.adapter = adapter
 
-        view.noFavorites.text = getString(R.string.no_favorite_songs_yet)
-        view.noFavorites.setCompoundDrawables(null, resources.getDrawable(R.drawable.ic_music_note, null), null, null)
+        val icon: Drawable = resources.getDrawable(R.drawable.ic_favorite_not, null)
+        view.noFavorites.text = getString(R.string.no_favorite_albums_yet)
+        view.noFavorites.setCompoundDrawablesRelativeWithIntrinsicBounds(null, icon, null, null)
 
         return view
     }
