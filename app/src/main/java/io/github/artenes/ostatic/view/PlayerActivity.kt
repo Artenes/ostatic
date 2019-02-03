@@ -76,6 +76,11 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unbindService(this)
+    }
+
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
         this.service = (service as MusicPlayerService.MusicPlayerBinder).service
         val session = this.service.getSession() as MusicSession
