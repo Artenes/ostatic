@@ -40,4 +40,6 @@
     <string name="my_albums">My albums</string>
     <string name="my_songs">My songs</string>
 
+    <string name="no_favorite_albums_yet">No favorite albums yet!</string>
+
 </resources>

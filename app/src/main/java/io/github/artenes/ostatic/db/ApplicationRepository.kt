@@ -105,6 +105,11 @@ class ApplicationRepository(context: Context) {
         }
     }
 
+    suspend fun getFavoriteAlbums(): List<TopAlbumView> {
+        //reversed to show the most recent first
+        return db.albumDao().getFavoriteAlbums().reversed()
+    }
+
     suspend fun getFavorite(id: String): FavoriteEntity? {
         return db.albumDao().getFavorite(id)
     }

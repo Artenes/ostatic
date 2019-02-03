@@ -32,6 +32,8 @@
         <deepLink android:id="@+id/deepLink2" app:uri="https://ostatic.artenes.github.io/player"/>
     </activity>
     <fragment android:id="@+id/libraryFragment" android:name="io.github.artenes.ostatic.view.LibraryFragment"
-              android:label="LibraryFragment"/>
+              android:label="LibraryFragment">
+        <action android:id="@+id/action_libraryFragment_to_albumFragment" app:destination="@id/albumFragment"/>
+    </fragment>
 
 </navigation>

@@ -27,6 +27,7 @@ class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
         const val TOP_LAST = "TOP_LAST"
         const val TOP_NEWLY = "TOP_NEWLY"
         const val TOP_RECENT = "TOP_RECENT"
+        const val FAVORITES = "FAVORITES"
 
     }
 
@@ -84,6 +85,7 @@ class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
                 TOP_LAST -> repo.getTop100Last6Months()
                 TOP_NEWLY -> repo.getTop100NewlyAdded()
                 TOP_RECENT -> repo.getRecentAlbums()
+                FAVORITES -> repo.getFavoriteAlbums()
                 else -> emptyList()
             }
         }

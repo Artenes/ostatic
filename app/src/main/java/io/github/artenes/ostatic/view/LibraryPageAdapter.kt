@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import io.github.artenes.ostatic.R
 
-class LibraryPageAdapter(context: Context, fm: FragmentManager): FragmentPagerAdapter(fm) {
+class LibraryPageAdapter(context: Context, fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
     private val pages = listOf(
         LibraryFragment(context.getString(R.string.my_albums), FavoriteAlbumsFragment()),

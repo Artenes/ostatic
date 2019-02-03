@@ -45,18 +45,24 @@ class MainActivity : AppCompatActivity(), ServiceConnection, View.OnClickListene
     }
 
     fun openAlbumFromHome(id: String) {
-        val bundle = bundleOf(AlbumFragment.ALBUM_ID to id)
-        navController.navigate(R.id.action_homeFragment_to_albumFragment, bundle)
+        openAlbum(id, R.id.action_homeFragment_to_albumFragment)
     }
 
     fun openAlbumFromList(id: String) {
-        val bundle = bundleOf(AlbumFragment.ALBUM_ID to id)
-        navController.navigate(R.id.action_albumsFragment_to_albumFragment, bundle)
+        openAlbum(id, R.id.action_albumsFragment_to_albumFragment)
     }
 
     fun openAlbumFromSearch(id: String) {
+        openAlbum(id, R.id.action_searchFragment_to_albumFragment)
+    }
+
+    fun openAlbumFromLibrary(id: String) {
+        openAlbum(id, R.id.action_libraryFragment_to_albumFragment)
+    }
+
+    private fun openAlbum(id: String, action: Int) {
         val bundle = bundleOf(AlbumFragment.ALBUM_ID to id)
-        navController.navigate(R.id.action_searchFragment_to_albumFragment, bundle)
+        navController.navigate(action, bundle)
     }
 
     fun showPlayerLoading() {
