@@ -53,9 +53,10 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
             albumCover.alpha = 1f
         }
 
-        //avoid loading multiple times
-        if (albumCover.tag != true) {
+        //load only when the album changes
+        if (albumCover.tag != song.albumName) {
             Picasso.get().loadAlbumCover(song.albumCover, albumCover)
+            albumCover.tag = song.albumName
         }
 
         if (state.isRandomMode) {

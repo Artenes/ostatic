@@ -15,6 +15,4 @@ fun Picasso.loadAlbumCover(cover: String?, imageView: ImageView, size: Int = 280
         .error(R.drawable.album)
         .into(imageView)
 
-    imageView.tag = true
-
 }
