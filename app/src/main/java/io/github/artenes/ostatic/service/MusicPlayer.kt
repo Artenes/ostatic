@@ -251,7 +251,12 @@ class MusicPlayer(context: Context, userAgent: String) {
     }
 
     fun previous() {
-        player.previous()
+        val playedMoreThan3Seconds = player.currentPosition > 3000
+        if (playedMoreThan3Seconds && isPlaying()) {
+            player.seekTo(0)
+        } else {
+            player.previous()
+        }
     }
 
     fun next() {
