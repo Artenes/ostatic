@@ -15,12 +15,16 @@
             android:name=".OstaticApplication"
             tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".MainActivity" android:screenOrientation="portrait"
-                  android:theme="@style/AppTheme.NotActionBar" android:launchMode="singleTop">
+        <activity android:name=".view.SplashScreen" android:screenOrientation="portrait"
+                  android:theme="@style/AppTheme.NotActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+
+        <activity android:name=".MainActivity" android:screenOrientation="portrait"
+                  android:theme="@style/AppTheme.NotActionBar" android:launchMode="singleTop">
             <nav-graph android:value="@navigation/main_nav_graph"/>
         </activity>
 

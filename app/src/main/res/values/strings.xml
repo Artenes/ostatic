@@ -43,4 +43,6 @@
     <string name="no_favorite_albums_yet">No favorite albums yet!</string>
     <string name="no_favorite_songs_yet">No favorite songs yet!</string>
 
+    <string name="loading_top_albums">loading top albums…</string>
+
 </resources>
