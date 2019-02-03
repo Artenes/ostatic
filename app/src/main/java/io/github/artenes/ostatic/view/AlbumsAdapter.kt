@@ -43,6 +43,9 @@ class AlbumsAdapter(val listener: OnAlbumClickListener) : RecyclerView.Adapter<A
         fun bind(album: TopAlbumView) {
             itemView.albumTitle.text = album.name
             itemView.albumSongs.text = itemView.context.getString(R.string.number_songs, album.files)
+            if (album.files == 0) {
+                itemView.albumSongs.visibility = View.GONE
+            }
             val albumUrl =
                 if (album.cover.isNullOrEmpty()) "android.resource://io.github.artenes.ostatic/drawable/album" else album.cover
             Picasso.get()
