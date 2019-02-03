@@ -37,4 +37,7 @@
 
     <string name="song_album_name">%s &#9702; %s</string>
 
+    <string name="my_albums">My albums</string>
+    <string name="my_songs">My songs</string>
+
 </resources>

@@ -16,9 +16,6 @@
         <action android:id="@+id/action_searchFragment_to_albumFragment" app:destination="@id/albumFragment"/>
     </fragment>
 
-    <fragment android:id="@+id/aboutFragment" android:name="io.github.artenes.ostatic.view.AboutFragment"
-              android:label="AboutFragment"/>
-
     <fragment android:id="@+id/albumsFragment" android:name="io.github.artenes.ostatic.view.AlbumsFragment"
               android:label="AlbumsFragment" tools:layout="@layout/list">
         <argument android:name="category" app:argType="string"/>
@@ -34,5 +31,7 @@
               android:label="PlayerActivity">
         <deepLink android:id="@+id/deepLink2" app:uri="https://ostatic.artenes.github.io/player"/>
     </activity>
+    <fragment android:id="@+id/libraryFragment" android:name="io.github.artenes.ostatic.view.LibraryFragment"
+              android:label="LibraryFragment"/>
 
 </navigation>

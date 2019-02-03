@@ -5,6 +5,6 @@
           android:visible="true"/>
     <item android:title="@string/search" android:id="@+id/searchFragment" android:icon="@drawable/ic_search"
           android:visible="true"/>
-    <item android:title="@string/about" android:id="@+id/aboutFragment" android:icon="@drawable/ic_about"
+    <item android:title="@string/library" android:id="@+id/libraryFragment" android:icon="@drawable/ic_library"
           android:visible="true"/>
 </menu>
