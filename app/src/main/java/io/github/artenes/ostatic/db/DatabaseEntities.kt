@@ -51,7 +51,7 @@ data class Top100NewlyAddedEntity(
 
 @Entity(tableName = "covers")
 data class CoverEntity(
-    @PrimaryKey var id: Int,
+    @PrimaryKey(autoGenerate = true) var id: Int,
     var album_id: String,
     var url: String
 )

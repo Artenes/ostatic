@@ -41,6 +41,9 @@ interface AlbumDao {
     @Query("select * from top_albums where id = :id and type = :type")
     suspend fun getTopAlbum(id: String, type: String): TopAlbumEntity?
 
+    @Query("select * from top_albums where id = :id")
+    suspend fun getTopAlbum(id: String): List<TopAlbumEntity>
+
     @Update
     suspend fun updateTopAlbum(topAlbum: TopAlbumEntity)
 

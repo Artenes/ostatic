@@ -65,6 +65,15 @@ class ApplicationRepository(context: Context) {
                 db.albumDao().insertCover(CoverEntity(0, remoteAlbum.id, cover))
             }
 
+            //updates the corresponding top albums covers now that we have a better resolution for them
+            if (remoteAlbum.cover.isNotEmpty()) {
+                val topAlbums = db.albumDao().getTopAlbum(remoteAlbum.id)
+                for (topAlbum in topAlbums) {
+                    topAlbum.cover = remoteAlbum.cover
+                    db.albumDao().updateTopAlbum(topAlbum)
+                }
+            }
+
             for (song in remoteAlbum.songs) {
                 db.albumDao().insertSong(SongEntity(song.id, song.name, song.track, song.time, "", song.albumId))
             }
