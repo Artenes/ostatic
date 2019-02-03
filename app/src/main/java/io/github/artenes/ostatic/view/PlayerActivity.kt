@@ -36,8 +36,15 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
 
         songTitle.text = song.name
         albumTitle.text = song.albumName
-        bufferingSong.visibility = if (state.isBuffering) View.VISIBLE else View.GONE
         playPause.setImageResource(if (state.isPlaying) R.drawable.ic_pause else R.drawable.ic_play)
+
+        if (state.isBuffering) {
+            bufferingSong.visibility = View.VISIBLE
+            albumCover.alpha = 0.5f
+        } else {
+            bufferingSong.visibility = View.GONE
+            albumCover.alpha = 1f
+        }
 
         //avoid loading multiple times
         if (albumCover.tag != true) {
