@@ -1,17 +1,24 @@
 package io.github.artenes.ostatic.view
 
+import android.Manifest
+import android.app.DownloadManager
 import android.content.ComponentName
+import android.content.Context
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.IBinder
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.google.android.exoplayer2.Player
 import com.squareup.picasso.Picasso
 import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.R
 import io.github.artenes.ostatic.loadAlbumCover
+import io.github.artenes.ostatic.service.DownloadSongTask
 import io.github.artenes.ostatic.service.MusicPlayerService
 import io.github.artenes.ostatic.service.MusicPlayerState
 import io.github.artenes.ostatic.service.MusicSession
@@ -25,6 +32,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
     private val job = Job()
     private val scope = CoroutineScope(Dispatchers.Main + job)
     private val repo = OstaticApplication.REPOSITORY
+    private val REQUEST_PERMISSION = 123
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +44,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
         repeat.setOnClickListener(this)
         shuffle.setOnClickListener(this)
         favorite.setOnClickListener(this)
+        download.setOnClickListener(this)
         seekBar.isEnabled = false
     }
 
@@ -108,6 +117,32 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
         }
     }
 
+    private fun downloadSong() {
+        val song = service.getSession()?.getCurrentState()?.currentSong()
+        if (song != null) {
+            DownloadSongTask(getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager, resources).execute(song)
+        }
+    }
+
+    private fun checkPermissionAndDownloadSong() {
+
+        val permission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+            downloadSong()
+            return
+        }
+
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_PERMISSION)
+
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == REQUEST_PERMISSION && grantResults.isNotEmpty() && grantResults.first() == PackageManager.PERMISSION_GRANTED) {
+            downloadSong()
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.playPause -> service.getSession()?.playOrPause()
@@ -116,6 +151,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
             R.id.repeat -> service.getSession()?.toggleRepeatMode()
             R.id.shuffle -> service.getSession()?.toggleRandomMode()
             R.id.favorite -> toggleFavorite()
+            R.id.download -> checkPermissionAndDownloadSong()
         }
     }
 

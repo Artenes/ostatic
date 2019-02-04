@@ -74,4 +74,7 @@ interface AlbumDao {
     @Query("update songs set url = :url where id = :id")
     fun updateSongMp3UrlNonSuspend(id: String, url: String)
 
+    @Query("select url from songs where id = :songId")
+    fun getSongMp3UrlNonSuspend(songId: String): String
+
 }

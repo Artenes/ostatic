@@ -146,7 +146,12 @@ class ApplicationRepository(context: Context) {
 
     fun getSongMp3Url(songId: String): String {
         var url: String? = mp3LinksCache[songId]
+
         if (url == null) {
+            url = db.albumDao().getSongMp3UrlNonSuspend(songId)
+        }
+
+        if (url.isNullOrEmpty()) {
             Log.d(TAG, "Fetching song $songId from KHInsider")
             url = khRepo.getMp3LinkForSong(songId)
             db.albumDao().updateSongMp3UrlNonSuspend(songId, url)
@@ -155,6 +160,7 @@ class ApplicationRepository(context: Context) {
         } else {
             Log.d(TAG, "Fetching song $songId from cache")
         }
+
         return url as String
     }
 
