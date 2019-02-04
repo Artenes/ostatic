@@ -25,30 +25,6 @@ data class TopAlbumEntity(
     @PrimaryKey var uuid: String = UUID.randomUUID().toString()
 )
 
-@Entity(tableName = "top_40")
-data class Top40Entity(
-    @PrimaryKey var album_id: String,
-    var position: Int
-)
-
-@Entity(tableName = "top_100_all_time")
-data class Top100AllTimeEntity(
-    @PrimaryKey var album_id: String,
-    var position: Int
-)
-
-@Entity(tableName = "top_100_last_6_months")
-data class Top100Last6MonthsEntity(
-    @PrimaryKey var album_id: String,
-    var position: Int
-)
-
-@Entity(tableName = "top_100_newly_added")
-data class Top100NewlyAddedEntity(
-    @PrimaryKey var album_id: String,
-    var position: Int
-)
-
 @Entity(tableName = "covers")
 data class CoverEntity(
     @PrimaryKey(autoGenerate = true) var id: Int,
