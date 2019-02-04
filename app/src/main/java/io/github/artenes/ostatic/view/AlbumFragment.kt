@@ -40,7 +40,7 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
 
     val adapter = SongsAdapter(this)
 
-    lateinit var service: MusicPlayerService
+    var service: MusicPlayerService? = null
     var musicSession: MusicSession? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -130,22 +130,25 @@ class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickLis
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
-        requireActivity().unbindService(this)
+        if (service != null) {
+            requireActivity().unbindService(this)
+        }
+
     }
 
     private fun bindToCurrentSession() {
-        musicSession = service.getSession(id)
+        musicSession = service?.getSession(id)
         if (musicSession != null) {
             musicSession?.addListener(musicStateObserver)
         }
     }
 
     private fun createNewSession(position: Int) {
-        musicSession = service.getSession(id)
+        musicSession = service?.getSession(id)
         if (musicSession == null) {
-            val session = service.createSession(id, adapter.songs, position)
-            session.addListener(musicStateObserver)
-            val state = session.getCurrentState() as MusicPlayerState
+            val session = service?.createSession(id, adapter.songs, position)
+            session?.addListener(musicStateObserver)
+            val state = session?.getCurrentState() as MusicPlayerState
             scope.launch { repo.markAsRecent(state.currentAlbum()) }
             musicSession = session
         }
