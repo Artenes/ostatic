@@ -27,7 +27,7 @@ class DownloadSongTask(private val manager: DownloadManager, private val resourc
             request.setTitle(resources.getString(R.string.downloading_song, song.name))
             request.setDescription(resources.getString(R.string.downloading_in_progress))
             request.setVisibleInDownloadsUi(true)
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "Ostatic/${song.name}")
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "Ostatic/${song.name}.mp3")
             manager.enqueue(request)
         }
 
