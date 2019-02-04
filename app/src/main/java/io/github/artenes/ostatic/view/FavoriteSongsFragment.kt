@@ -107,7 +107,8 @@ class FavoriteSongsFragment : Fragment(), ServiceConnection, FavoriteSongsAdapte
 
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
         this.service = (service as MusicPlayerService.MusicPlayerBinder).service
-        bindToCurrentSession()
+        //for now we will not update the list based on player status
+        //bindToCurrentSession()
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
