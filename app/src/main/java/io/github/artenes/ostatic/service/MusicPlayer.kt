@@ -109,6 +109,14 @@ class MusicSession(playList: List<SongView>, currentIndex: Int, private val play
         player.seekTo(time)
     }
 
+    fun getDuration(): Long {
+        return player.getDuration()
+    }
+
+    fun getCurrentPosition(): Long {
+        return player.getCurrentPosition()
+    }
+
     fun toggleRepeatMode() {
         player.toggleRepeatMode()
         liveState.value = liveState.value?.copy(repeatMode = player.getRepeatMode())
@@ -224,6 +232,14 @@ class MusicPlayer(context: Context, userAgent: String) {
 
     fun toggleRandomMode() {
         player.shuffleModeEnabled = !player.shuffleModeEnabled
+    }
+
+    fun getDuration(): Long {
+        return player.duration
+    }
+
+    fun getCurrentPosition(): Long {
+        return player.currentPosition
     }
 
     fun toggleRepeatMode() {

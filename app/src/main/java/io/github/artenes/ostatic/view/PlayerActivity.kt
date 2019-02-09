@@ -33,6 +33,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
     private val scope = CoroutineScope(Dispatchers.Main + job)
     private val repo = OstaticApplication.REPOSITORY
     private val REQUEST_PERMISSION = 123
+    private lateinit var musicPositionController: MusicPositionController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +46,6 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
         shuffle.setOnClickListener(this)
         favorite.setOnClickListener(this)
         download.setOnClickListener(this)
-        seekBar.isEnabled = false
     }
 
     fun bind(state: MusicPlayerState) {
@@ -62,6 +62,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
         } else {
             bufferingSong.visibility = View.GONE
             albumCover.alpha = 1f
+            musicPositionController.playMusic()
         }
 
         //load only when the album changes
@@ -163,6 +164,8 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
         this.service = (service as MusicPlayerService.MusicPlayerBinder).service
         val session = this.service.getSession() as MusicSession
+        //this has to go before the listener below, otherwise the property will not be initialized before call
+        musicPositionController = MusicPositionController(seekBar, currentTime, session)
         session.addListener(playerListener)
     }
 
