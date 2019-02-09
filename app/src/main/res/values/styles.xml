@@ -27,6 +27,10 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppTheme.NotActionBar.PlayerTheme">
+        <item name="android:navigationBarColor">@color/colorLightGray</item>
+    </style>
+
     <style name="DefaultTextStyle" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:fontFamily">sans-serif-medium</item>

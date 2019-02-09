@@ -10,5 +10,6 @@
     <dimen name="large_image_thumbnail">140dp</dimen>
     <dimen name="icon_large_size">50dp</dimen>
     <dimen name="icon_small_size">30dp</dimen>
+    <dimen name="icon_tiny_size">20dp</dimen>
 
 </resources>

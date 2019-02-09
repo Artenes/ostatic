@@ -30,7 +30,7 @@
         </activity>
 
         <activity android:name=".view.PlayerActivity" android:screenOrientation="portrait"
-                  android:theme="@style/AppTheme.NotActionBar"/>
+                  android:theme="@style/AppTheme.NotActionBar.PlayerTheme"/>
 
         <service android:name=".service.MusicPlayerService" android:exported="false"/>
 
