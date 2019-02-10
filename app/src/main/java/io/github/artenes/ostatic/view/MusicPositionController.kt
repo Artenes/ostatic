@@ -106,7 +106,9 @@ class MusicPositionController(
     }
 
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-        onUserSeeking(progress)
+        if (fromUser) {
+            onUserSeeking(progress)
+        }
     }
 
     override fun onStartTrackingTouch(seekBar: SeekBar?) {
