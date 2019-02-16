@@ -5,6 +5,7 @@ import android.util.Log
 import io.github.artenes.ostatic.api.JsoupHtmlDocumentReader
 import io.github.artenes.ostatic.api.KhinsiderRepository
 import io.github.artenes.ostatic.model.Album
+import io.github.artenes.ostatic.model.AlbumWithCategory
 import io.github.artenes.ostatic.model.TopAlbums
 import java.util.*
 
@@ -19,6 +20,32 @@ class ApplicationRepository(context: Context) {
     private val db: ApplicationDatabase = ApplicationDatabase.getInstance(context)
     private val khRepo: KhinsiderRepository = KhinsiderRepository(JsoupHtmlDocumentReader())
     private val mp3LinksCache: MutableMap<String, String> = mutableMapOf()
+
+    suspend fun getRecentAndTopAlbums(limit: Int = 7): List<AlbumWithCategory> {
+        val albums = mutableListOf<AlbumWithCategory>()
+
+        albums.addAll(getRecentAlbums(limit).map {
+            AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumWithCategory.CATEGORY_RECENT)
+        })
+
+        albums.addAll(getTop40(limit).map {
+            AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumWithCategory.CATEGORY_TOP_40)
+        })
+
+        albums.addAll(getTop100AllTime(limit).map {
+            AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumWithCategory.CATEGORY_TOP_ALL)
+        })
+
+        albums.addAll(getTop100Last6Months(limit).map {
+            AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumWithCategory.CATEGORY_TOP_6_MONTHS)
+        })
+
+        albums.addAll(getTop100NewlyAdded(limit).map {
+            AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumWithCategory.CATEGORY_TOP_NEWLY)
+        })
+
+        return albums
+    }
 
     suspend fun getTop40(limit: Int = 40): List<TopAlbumView> {
         return getTopAlbum("top_40", TopAlbums.TOP_40, limit)
