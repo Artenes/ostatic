@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import androidx.core.os.bundleOf
 import androidx.media.MediaBrowserServiceCompat
 import io.github.artenes.ostatic.OstaticApplication
 import kotlinx.coroutines.*
@@ -62,10 +63,15 @@ class MusicPlayerService : MediaBrowserServiceCompat() {
         onLoadChildrenSuspend(parentId, result)
     }
 
-    private fun onLoadChildrenSuspend(parentId: String, result: Result<MutableList<MediaBrowserCompat.MediaItem>>) =
+    override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaBrowserCompat.MediaItem>>, options: Bundle) {
+        result.detach()
+        onLoadChildrenSuspend(parentId, result, options)
+    }
+
+    private fun onLoadChildrenSuspend(parentId: String, result: Result<MutableList<MediaBrowserCompat.MediaItem>>, bundle: Bundle = bundleOf()) =
         scope.launch {
             val mediaItems = withContext(Dispatchers.IO) {
-                musicBrowser.getChild(parentId)
+                musicBrowser.getChild(parentId, bundle)
             }
             result.sendResult(mediaItems)
         }

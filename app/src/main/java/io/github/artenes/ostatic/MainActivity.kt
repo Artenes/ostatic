@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity(), ServiceConnection, View.OnClickListene
     fun bindToCurrentSession(session: MusicSession?) {
         if (session == null) {
             hidePlayer()
-            restoreLatestSessionIfAvailable()
+            //restoreLatestSessionIfAvailable()
         } else {
             session.addListener(musicStateObserver)
             showPlayer()

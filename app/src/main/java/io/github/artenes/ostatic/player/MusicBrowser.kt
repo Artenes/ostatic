@@ -1,6 +1,7 @@
 package io.github.artenes.ostatic.player
 
 import android.net.Uri
+import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaDescriptionCompat
 import androidx.core.os.bundleOf
@@ -16,7 +17,11 @@ class MusicBrowser(private val repo: ApplicationRepository) {
         const val OSTATIC_FAVORITE_SONGS = "https://ostatic.io/favorites/"
         const val OSTATIC_ALBUM = "https://ostatic.io/album/"
         const val OSTATIC_SONG = "https://ostatic.io/song/"
+
+        const val BUNDLE_KEY_LIMIT = "limit"
         const val BUNDLE_KEY_CATEGORY = "category"
+
+        const val TOP_ALBUM_DEFAULT_LIMIT = 7
 
     }
 
@@ -24,9 +29,9 @@ class MusicBrowser(private val repo: ApplicationRepository) {
         return MediaBrowserServiceCompat.BrowserRoot(OSTATIC_ROOT, null)
     }
 
-    suspend fun getChild(parentId: String): MutableList<MediaBrowserCompat.MediaItem> {
+    suspend fun getChild(parentId: String, bundle: Bundle): MutableList<MediaBrowserCompat.MediaItem> {
         return when (parentId) {
-            OSTATIC_ROOT -> getRootMediaItems()
+            OSTATIC_ROOT -> getRootMediaItems(bundle)
             OSTATIC_ALBUMS_LIST -> mutableListOf()
             OSTATIC_FAVORITE_SONGS -> mutableListOf()
             OSTATIC_ALBUM -> mutableListOf()
@@ -35,14 +40,16 @@ class MusicBrowser(private val repo: ApplicationRepository) {
         }
     }
 
-    private suspend fun getRootMediaItems(): MutableList<MediaBrowserCompat.MediaItem> {
-        return repo.getRecentAndTopAlbums().map {
+    private suspend fun getRootMediaItems(bundle: Bundle): MutableList<MediaBrowserCompat.MediaItem> {
+        val limit =
+            if (bundle.containsKey(BUNDLE_KEY_LIMIT)) bundle.getInt(BUNDLE_KEY_LIMIT) else TOP_ALBUM_DEFAULT_LIMIT
+        return repo.getRecentAndTopAlbums(limit).map {
             val albumUri = Uri.parse(OSTATIC_ALBUM).buildUpon().appendPath(it.id).build()
-            val iconUri = if (it.cover.isEmpty()) null else Uri.parse(it.cover)
+            val iconUri = Uri.parse(it.cover)
 
             val mediaDescription =
                 MediaDescriptionCompat.Builder()
-                    .setMediaId(albumUri.toString())
+                    .setMediaId(it.id)
                     .setTitle(it.name)
                     .setIconUri(iconUri)
                     .setMediaUri(albumUri)

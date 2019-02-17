@@ -21,7 +21,7 @@ class ApplicationRepository(context: Context) {
     private val khRepo: KhinsiderRepository = KhinsiderRepository(JsoupHtmlDocumentReader())
     private val mp3LinksCache: MutableMap<String, String> = mutableMapOf()
 
-    suspend fun getRecentAndTopAlbums(limit: Int = 7): List<AlbumWithCategory> {
+    suspend fun getRecentAndTopAlbums(limit: Int): List<AlbumWithCategory> {
         val albums = mutableListOf<AlbumWithCategory>()
 
         albums.addAll(getRecentAlbums(limit).map {
