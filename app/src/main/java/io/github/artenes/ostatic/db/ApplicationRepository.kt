@@ -5,6 +5,7 @@ import android.util.Log
 import io.github.artenes.ostatic.api.JsoupHtmlDocumentReader
 import io.github.artenes.ostatic.api.KhinsiderRepository
 import io.github.artenes.ostatic.model.Album
+import io.github.artenes.ostatic.model.AlbumCategory
 import io.github.artenes.ostatic.model.AlbumWithCategory
 import io.github.artenes.ostatic.model.TopAlbums
 import java.util.*
@@ -25,23 +26,23 @@ class ApplicationRepository(context: Context) {
         val albums = mutableListOf<AlbumWithCategory>()
 
         albums.addAll(getRecentAlbums(limit).map {
-            AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumWithCategory.CATEGORY_RECENT)
+            AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumCategory.CATEGORY_RECENT)
         })
 
         albums.addAll(getTop40(limit).map {
-            AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumWithCategory.CATEGORY_TOP_40)
+            AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumCategory.CATEGORY_TOP_40)
         })
 
         albums.addAll(getTop100AllTime(limit).map {
-            AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumWithCategory.CATEGORY_TOP_ALL)
+            AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumCategory.CATEGORY_TOP_ALL)
         })
 
         albums.addAll(getTop100Last6Months(limit).map {
-            AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumWithCategory.CATEGORY_TOP_6_MONTHS)
+            AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumCategory.CATEGORY_TOP_6_MONTHS)
         })
 
         albums.addAll(getTop100NewlyAdded(limit).map {
-            AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumWithCategory.CATEGORY_TOP_NEWLY)
+            AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumCategory.CATEGORY_TOP_NEWLY)
         })
 
         return albums

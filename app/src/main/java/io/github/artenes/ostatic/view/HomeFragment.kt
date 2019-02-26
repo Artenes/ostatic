@@ -2,7 +2,6 @@ package io.github.artenes.ostatic.view
 
 import android.content.ComponentName
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.view.LayoutInflater
@@ -14,8 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.artenes.ostatic.MainActivity
 import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.R
-import io.github.artenes.ostatic.db.TopAlbumView
-import io.github.artenes.ostatic.model.AlbumWithCategory
+import io.github.artenes.ostatic.model.AlbumCategory
+import io.github.artenes.ostatic.model.AlbumForShowcase
+import io.github.artenes.ostatic.model.AlbumSection
 import io.github.artenes.ostatic.player.MusicBrowser
 import io.github.artenes.ostatic.player.MusicPlayerService
 import kotlinx.android.synthetic.main.preload_list.view.*
@@ -24,6 +24,7 @@ class HomeFragment : Fragment(), AlbumListAdapter.OnAlbumClickListener {
 
     companion object {
         private const val ALBUM_LIMIT_PER_CATEGORY = 7
+        private const val MORE_ALBUMS_COVER = "android.resource://io.github.artenes.ostatic/drawable/album"
     }
 
     private lateinit var mediaBrowser: MediaBrowserCompat
@@ -74,7 +75,11 @@ class HomeFragment : Fragment(), AlbumListAdapter.OnAlbumClickListener {
             bundleOf(MusicBrowser.BUNDLE_KEY_LIMIT to ALBUM_LIMIT_PER_CATEGORY),
             object : MediaBrowserCompat.SubscriptionCallback() {
 
-                override fun onChildrenLoaded(parentId: String, children: MutableList<MediaBrowserCompat.MediaItem>, options: Bundle) {
+                override fun onChildrenLoaded(
+                    parentId: String,
+                    children: MutableList<MediaBrowserCompat.MediaItem>,
+                    options: Bundle
+                ) {
                     adapter.setData(makeListOfSections(children))
                     view.content.visibility = View.VISIBLE
                     view.progress.visibility = View.GONE
@@ -84,188 +89,85 @@ class HomeFragment : Fragment(), AlbumListAdapter.OnAlbumClickListener {
 
     }
 
-    override fun onAlbumClick(album: TopAlbumView) {
+    override fun onAlbumClick(album: AlbumForShowcase) {
         //work around to use what exists already
-        if (album.size == TopAlbumView.NEXT_PAGE_ID) {
-            (requireActivity() as MainActivity).openAllAlbumsFromHome(album.added, album.id)
+        if (album.isCategory()) {
+            (requireActivity() as MainActivity).openAllAlbumsFromHome(album.id)
         } else {
             (requireActivity() as MainActivity).openAlbumFromHome(album.id)
         }
     }
 
+    private fun MutableList<MediaBrowserCompat.MediaItem>.getCategory(category: String): MutableList<AlbumForShowcase> {
+        return this.filter {
+            it.description.extras?.getString(MusicBrowser.BUNDLE_KEY_CATEGORY)?.equals(category) ?: false
+        }.map {
+            AlbumForShowcase(
+                it.mediaId as String,
+                it.description.title as String,
+                it.description.iconUri.toString()
+            )
+        }.toMutableList()
+    }
+
+    private fun createSection(
+        albums: MutableList<MediaBrowserCompat.MediaItem>, category: String, title: String, subtitle: String
+    ): AlbumSection {
+        val albumsFromCategory = albums.getCategory(category)
+
+        if (albumsFromCategory.size == ALBUM_LIMIT_PER_CATEGORY) {
+            albumsFromCategory.add(AlbumForShowcase(category, getString(R.string.all_albums), MORE_ALBUMS_COVER))
+        }
+
+        return AlbumSection(title, subtitle, albumsFromCategory, false)
+    }
+
     private fun makeListOfSections(albums: MutableList<MediaBrowserCompat.MediaItem>): List<AlbumSection> {
         val sections = mutableListOf<AlbumSection>()
 
-        val recents = albums.filter {
-            it.description.extras?.getString(MusicBrowser.BUNDLE_KEY_CATEGORY)?.equals(
-                AlbumWithCategory.CATEGORY_RECENT
-            ) ?: false
-        }.map {
-            TopAlbumView(
-                it.mediaId as String,
-                it.description.title as String,
-                "",
-                "",
-                "",
-                0,
-                0,
-                it.description.iconUri.toString()
-            )
-        }.toMutableList()
-        if (recents.isNotEmpty()) {
-            if (recents.size == ALBUM_LIMIT_PER_CATEGORY) {
-                recents.add(
-                    TopAlbumView.makeNextPageAlbum(
-                        AlbumsFragment.TOP_RECENT,
-                        getString(R.string.all_albums),
-                        getString(R.string.top_recent_soundtracks)
-                    )
-                )
-            }
-            sections.add(
-                AlbumSection(
-                    getString(R.string.top_recent_soundtracks),
-                    getString(R.string.top_recent_soundtracks_subtitle),
-                    recents,
-                    false
-                )
-            )
+        createSection(
+            albums,
+            AlbumCategory.CATEGORY_RECENT,
+            getString(R.string.top_recent_soundtracks),
+            getString(R.string.top_recent_soundtracks_subtitle)
+        ).takeIf { it.albums.isNotEmpty() }?.apply {
+            sections.add(this)
         }
 
-        val top40 = albums.filter {
-            it.description.extras?.getString(MusicBrowser.BUNDLE_KEY_CATEGORY)?.equals(
-                AlbumWithCategory.CATEGORY_TOP_40
-            ) ?: false
-        }.map {
-            TopAlbumView(
-                it.mediaId as String,
-                it.description.title as String,
-                "",
-                "",
-                "",
-                0,
-                0,
-                it.description.iconUri.toString()
-            )
-        }.toMutableList()
-        if (top40.isNotEmpty()) {
-            top40.add(
-                TopAlbumView.makeNextPageAlbum(
-                    AlbumsFragment.TOP_40,
-                    getString(R.string.all_albums),
-                    getString(R.string.top_40_soundtracks)
-                )
-            )
-            sections.add(
-                AlbumSection(
-                    getString(R.string.top_40_soundtracks),
-                    getString(R.string.top_40_soundtracks_subtitle),
-                    top40,
-                    false
-                )
-            )
+        createSection(
+            albums,
+            AlbumCategory.CATEGORY_TOP_40,
+            getString(R.string.top_40_soundtracks),
+            getString(R.string.top_40_soundtracks_subtitle)
+        ).takeIf { it.albums.isNotEmpty() }?.apply {
+            sections.add(this)
         }
 
-        val topNewly = albums.filter {
-            it.description.extras?.getString(MusicBrowser.BUNDLE_KEY_CATEGORY)?.equals(
-                AlbumWithCategory.CATEGORY_TOP_NEWLY
-            ) ?: false
-        }.map {
-            TopAlbumView(
-                it.mediaId as String,
-                it.description.title as String,
-                "",
-                "",
-                "",
-                0,
-                0,
-                it.description.iconUri.toString()
-            )
-        }.toMutableList()
-        if (topNewly.isNotEmpty()) {
-            topNewly.add(
-                TopAlbumView.makeNextPageAlbum(
-                    AlbumsFragment.TOP_NEWLY,
-                    getString(R.string.all_albums),
-                    getString(R.string.top_newly_soundtracks)
-                )
-            )
-            sections.add(
-                AlbumSection(
-                    getString(R.string.top_newly_soundtracks),
-                    getString(R.string.top_newly_soundtracks_subtitle),
-                    topNewly,
-                    false
-                )
-            )
+        createSection(
+            albums,
+            AlbumCategory.CATEGORY_TOP_NEWLY,
+            getString(R.string.top_newly_soundtracks),
+            getString(R.string.top_newly_soundtracks_subtitle)
+        ).takeIf { it.albums.isNotEmpty() }?.apply {
+            sections.add(this)
         }
 
-        val top6Months = albums.filter {
-            it.description.extras?.getString(MusicBrowser.BUNDLE_KEY_CATEGORY)?.equals(
-                AlbumWithCategory.CATEGORY_TOP_6_MONTHS
-            ) ?: false
-        }.map {
-            TopAlbumView(
-                it.mediaId as String,
-                it.description.title as String,
-                "",
-                "",
-                "",
-                0,
-                0,
-                it.description.iconUri.toString()
-            )
-        }.toMutableList()
-        if (top6Months.isNotEmpty()) {
-            top6Months.add(
-                TopAlbumView.makeNextPageAlbum(
-                    AlbumsFragment.TOP_LAST,
-                    getString(R.string.all_albums),
-                    getString(R.string.top_months_soundtracks)
-                )
-            )
-            sections.add(
-                AlbumSection(
-                    getString(R.string.top_months_soundtracks),
-                    getString(R.string.top_months_soundtracks_subtitle),
-                    top6Months,
-                    false
-                )
-            )
+        createSection(
+            albums,
+            AlbumCategory.CATEGORY_TOP_6_MONTHS,
+            getString(R.string.top_months_soundtracks),
+            getString(R.string.top_months_soundtracks_subtitle)
+        ).takeIf { it.albums.isNotEmpty() }?.apply {
+            sections.add(this)
         }
 
-        val topAllTime = albums.filter {
-            it.description.extras?.getString(MusicBrowser.BUNDLE_KEY_CATEGORY)?.equals(
-                AlbumWithCategory.CATEGORY_TOP_ALL
-            ) ?: false
-        }.map {
-            TopAlbumView(
-                it.mediaId as String,
-                it.description.title as String,
-                "",
-                "",
-                "",
-                0,
-                0,
-                it.description.iconUri.toString()
-            )
-        }.toMutableList()
-        if (topAllTime.isNotEmpty()) {
-            topAllTime.add(
-                TopAlbumView.makeNextPageAlbum(
-                    AlbumsFragment.TOP_ALL,
-                    getString(R.string.all_albums),
-                    getString(R.string.top_all_soundtracks)
-                )
-            )
-            sections.add(
-                AlbumSection(
-                    getString(R.string.top_all_soundtracks),
-                    getString(R.string.top_all_soundtracks_subtitle),
-                    topAllTime,
-                    false
-                )
-            )
+        createSection(
+            albums,
+            AlbumCategory.CATEGORY_TOP_ALL,
+            getString(R.string.top_all_soundtracks),
+            getString(R.string.top_all_soundtracks_subtitle)
+        ).takeIf { it.albums.isNotEmpty() }?.apply {
+            sections.add(this)
         }
 
         return sections

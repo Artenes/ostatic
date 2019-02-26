@@ -12,6 +12,7 @@ import io.github.artenes.ostatic.MainActivity
 import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.R
 import io.github.artenes.ostatic.db.TopAlbumView
+import io.github.artenes.ostatic.model.AlbumCategory
 import kotlinx.android.synthetic.main.album_view.view.*
 import kotlinx.android.synthetic.main.preload_list.view.*
 import kotlinx.coroutines.*
@@ -21,13 +22,6 @@ class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
     companion object {
 
         const val CATEGORY = "CATEGORY"
-        const val TITLE = "TITLE"
-        const val TOP_40 = "TOP_40"
-        const val TOP_ALL = "TOP_ALL"
-        const val TOP_LAST = "TOP_LAST"
-        const val TOP_NEWLY = "TOP_NEWLY"
-        const val TOP_RECENT = "TOP_RECENT"
-        const val FAVORITES = "FAVORITES"
 
     }
 
@@ -40,8 +34,14 @@ class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
     }
 
     val title by lazy {
-        val args = arguments as Bundle
-        args.getString(TITLE)
+        when (category) {
+            AlbumCategory.CATEGORY_RECENT -> getString(R.string.top_recent_soundtracks)
+            AlbumCategory.CATEGORY_TOP_40 -> getString(R.string.top_40_soundtracks)
+            AlbumCategory.CATEGORY_TOP_6_MONTHS -> getString(R.string.top_months_soundtracks)
+            AlbumCategory.CATEGORY_TOP_ALL -> getString(R.string.top_all_soundtracks)
+            AlbumCategory.CATEGORY_TOP_NEWLY -> getString(R.string.top_newly_soundtracks)
+            else -> ""
+        }
     }
 
     val repo = OstaticApplication.REPOSITORY
@@ -80,12 +80,12 @@ class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
 
         val albums = withContext(Dispatchers.IO) {
             when (category) {
-                TOP_40 -> repo.getTop40()
-                TOP_ALL -> repo.getTop100AllTime()
-                TOP_LAST -> repo.getTop100Last6Months()
-                TOP_NEWLY -> repo.getTop100NewlyAdded()
-                TOP_RECENT -> repo.getRecentAlbums()
-                FAVORITES -> repo.getFavoriteAlbums()
+                AlbumCategory.CATEGORY_TOP_40 -> repo.getTop40()
+                AlbumCategory.CATEGORY_TOP_ALL -> repo.getTop100AllTime()
+                AlbumCategory.CATEGORY_TOP_6_MONTHS -> repo.getTop100Last6Months()
+                AlbumCategory.CATEGORY_TOP_NEWLY -> repo.getTop100NewlyAdded()
+                AlbumCategory.CATEGORY_RECENT -> repo.getRecentAlbums()
+                AlbumCategory.CATEGORY_FAVORITES -> repo.getFavoriteAlbums()
                 else -> emptyList()
             }
         }

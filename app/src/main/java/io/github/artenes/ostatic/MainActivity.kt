@@ -46,8 +46,8 @@ class MainActivity : AppCompatActivity(), ServiceConnection, View.OnClickListene
         bottomNavigationView.setupWithNavController(navController)
     }
 
-    fun openAllAlbumsFromHome(title: String, category: String) {
-        val bundle = bundleOf(AlbumsFragment.TITLE to title, AlbumsFragment.CATEGORY to category)
+    fun openAllAlbumsFromHome(category: String) {
+        val bundle = bundleOf(AlbumsFragment.CATEGORY to category)
         navController.navigate(R.id.action_homeFragment_to_albumsFragment, bundle)
     }
 

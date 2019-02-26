@@ -12,17 +12,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import io.github.artenes.ostatic.R
 import io.github.artenes.ostatic.db.TopAlbumView
+import io.github.artenes.ostatic.model.AlbumForShowcase
+import io.github.artenes.ostatic.model.AlbumSection
 import kotlinx.android.synthetic.main.album_section.view.*
 
-data class AlbumSection(
-    val title: String,
-    val subtitle: String,
-    val albums: List<TopAlbumView>,
-    val isHighlight: Boolean
-)
-
-class TopAlbumsAdapter(val listener: AlbumListAdapter.OnAlbumClickListener) :
-    RecyclerView.Adapter<TopAlbumsAdapter.AlbumSectionViewHolder>() {
+class TopAlbumsAdapter(val listener: AlbumListAdapter.OnAlbumClickListener) : RecyclerView.Adapter<TopAlbumsAdapter.AlbumSectionViewHolder>() {
 
     var sections: MutableList<AlbumSection> = mutableListOf()
 
@@ -91,12 +85,12 @@ class AlbumListAdapter(val listener: OnAlbumClickListener, val isHighlight: Bool
     RecyclerView.Adapter<AlbumListAdapter.AlbumViewHolder>() {
 
     interface OnAlbumClickListener {
-        fun onAlbumClick(album: TopAlbumView)
+        fun onAlbumClick(album: AlbumForShowcase)
     }
 
-    var albums: MutableList<TopAlbumView> = mutableListOf()
+    var albums: MutableList<AlbumForShowcase> = mutableListOf()
 
-    fun setData(newAlbums: List<TopAlbumView>) {
+    fun setData(newAlbums: List<AlbumForShowcase>) {
         albums.clear()
         albums.addAll(newAlbums)
         notifyDataSetChanged()
@@ -120,11 +114,11 @@ class AlbumListAdapter(val listener: OnAlbumClickListener, val isHighlight: Bool
 
     inner class AlbumViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
 
-        fun bind(album: TopAlbumView) {
+        fun bind(album: AlbumForShowcase) {
             itemView.findViewById<TextView>(R.id.itemTitle).text = album.name
             val cover = itemView.findViewById<ImageView>(R.id.itemAlbumCover)
             val albumUrl =
-                if (album.cover.isNullOrEmpty()) "android.resource://io.github.artenes.ostatic/drawable/album" else album.cover
+                if (album.cover.isEmpty()) "android.resource://io.github.artenes.ostatic/drawable/album" else album.cover
             Picasso.get()
                 .load(albumUrl)
                 .resize(280, 280)
