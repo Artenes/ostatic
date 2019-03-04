@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso
 import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.R
 import io.github.artenes.ostatic.db.SongView
+import io.github.artenes.ostatic.model.Ostatic
 import io.github.artenes.ostatic.service.MusicPlayerService
 import io.github.artenes.ostatic.service.MusicPlayerState
 import io.github.artenes.ostatic.service.MusicSession
@@ -24,13 +25,15 @@ import kotlinx.coroutines.*
 class AlbumFragment : Fragment(), ServiceConnection, SongsAdapter.OnSongClickListener, View.OnClickListener {
 
     companion object {
+        const val URI = "URI"
+    }
 
-        const val ALBUM_ID = "ALBUM_ID"
-
+    val uri: String by lazy {
+        arguments?.getString(URI) ?: ""
     }
 
     val id: String by lazy {
-        arguments?.getString(ALBUM_ID) ?: ""
+        Ostatic.getIdFromUri(uri)
     }
 
     val repo = OstaticApplication.REPOSITORY

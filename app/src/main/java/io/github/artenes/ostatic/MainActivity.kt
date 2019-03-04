@@ -46,29 +46,29 @@ class MainActivity : AppCompatActivity(), ServiceConnection, View.OnClickListene
         bottomNavigationView.setupWithNavController(navController)
     }
 
-    fun openAllAlbumsFromHome(category: String) {
-        val bundle = bundleOf(AlbumsFragment.CATEGORY to category)
+    fun openAllAlbumsFromHome(uri: String) {
+        val bundle = bundleOf(AlbumsFragment.URI to uri)
         navController.navigate(R.id.action_homeFragment_to_albumsFragment, bundle)
     }
 
-    fun openAlbumFromHome(id: String) {
-        openAlbum(id, R.id.action_homeFragment_to_albumFragment)
+    fun openAlbumFromHome(uri: String) {
+        openAlbum(uri, R.id.action_homeFragment_to_albumFragment)
     }
 
-    fun openAlbumFromList(id: String) {
-        openAlbum(id, R.id.action_albumsFragment_to_albumFragment)
+    fun openAlbumFromList(uri: String) {
+        openAlbum(uri, R.id.action_albumsFragment_to_albumFragment)
     }
 
-    fun openAlbumFromSearch(id: String) {
-        openAlbum(id, R.id.action_searchFragment_to_albumFragment)
+    fun openAlbumFromSearch(uri: String) {
+        openAlbum(uri, R.id.action_searchFragment_to_albumFragment)
     }
 
-    fun openAlbumFromLibrary(id: String) {
-        openAlbum(id, R.id.action_libraryFragment_to_albumFragment)
+    fun openAlbumFromLibrary(uri: String) {
+        openAlbum(uri, R.id.action_libraryFragment_to_albumFragment)
     }
 
-    private fun openAlbum(id: String, action: Int) {
-        val bundle = bundleOf(AlbumFragment.ALBUM_ID to id)
+    private fun openAlbum(uri: String, action: Int) {
+        val bundle = bundleOf(AlbumFragment.URI to uri)
         navController.navigate(action, bundle)
     }
 

@@ -12,7 +12,7 @@ import io.github.artenes.ostatic.MainActivity
 import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.R
 import io.github.artenes.ostatic.db.TopAlbumView
-import io.github.artenes.ostatic.model.AlbumCategory
+import io.github.artenes.ostatic.model.Ostatic
 import kotlinx.android.synthetic.main.album_view.view.*
 import kotlinx.android.synthetic.main.preload_list.view.*
 import kotlinx.coroutines.*
@@ -20,26 +20,23 @@ import kotlinx.coroutines.*
 class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
 
     companion object {
-
-        const val CATEGORY = "CATEGORY"
-
+        const val URI = "URI"
     }
 
     val job = Job()
     val scope = CoroutineScope(Dispatchers.Main + job)
 
-    val category by lazy {
-        val args = arguments as Bundle
-        args.getString(CATEGORY)
+    val uri by lazy {
+        arguments?.getString(URI) ?: Ostatic.RECENT
     }
 
     val title by lazy {
-        when (category) {
-            AlbumCategory.CATEGORY_RECENT -> getString(R.string.top_recent_soundtracks)
-            AlbumCategory.CATEGORY_TOP_40 -> getString(R.string.top_40_soundtracks)
-            AlbumCategory.CATEGORY_TOP_6_MONTHS -> getString(R.string.top_months_soundtracks)
-            AlbumCategory.CATEGORY_TOP_ALL -> getString(R.string.top_all_soundtracks)
-            AlbumCategory.CATEGORY_TOP_NEWLY -> getString(R.string.top_newly_soundtracks)
+        when (uri) {
+            Ostatic.RECENT -> getString(R.string.top_recent_soundtracks)
+            Ostatic.TOP_40 -> getString(R.string.top_40_soundtracks)
+            Ostatic.TOP_6_MONTHS -> getString(R.string.top_months_soundtracks)
+            Ostatic.TOP_ALL -> getString(R.string.top_all_soundtracks)
+            Ostatic.TOP_NEWLY -> getString(R.string.top_newly_soundtracks)
             else -> ""
         }
     }
@@ -79,13 +76,13 @@ class AlbumsFragment : Fragment(), AlbumsAdapter.OnAlbumClickListener {
         view.progress.visibility = View.VISIBLE
 
         val albums = withContext(Dispatchers.IO) {
-            when (category) {
-                AlbumCategory.CATEGORY_TOP_40 -> repo.getTop40()
-                AlbumCategory.CATEGORY_TOP_ALL -> repo.getTop100AllTime()
-                AlbumCategory.CATEGORY_TOP_6_MONTHS -> repo.getTop100Last6Months()
-                AlbumCategory.CATEGORY_TOP_NEWLY -> repo.getTop100NewlyAdded()
-                AlbumCategory.CATEGORY_RECENT -> repo.getRecentAlbums()
-                AlbumCategory.CATEGORY_FAVORITES -> repo.getFavoriteAlbums()
+            when (uri) {
+                Ostatic.TOP_40 -> repo.getTop40()
+                Ostatic.TOP_ALL -> repo.getTop100AllTime()
+                Ostatic.TOP_6_MONTHS -> repo.getTop100Last6Months()
+                Ostatic.TOP_NEWLY -> repo.getTop100NewlyAdded()
+                Ostatic.RECENT -> repo.getRecentAlbums()
+                Ostatic.FAVORITES -> repo.getFavoriteAlbums()
                 else -> emptyList()
             }
         }

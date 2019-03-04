@@ -13,19 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.artenes.ostatic.MainActivity
 import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.R
-import io.github.artenes.ostatic.model.AlbumCategory
-import io.github.artenes.ostatic.model.AlbumForShowcase
-import io.github.artenes.ostatic.model.AlbumSection
+import io.github.artenes.ostatic.model.*
 import io.github.artenes.ostatic.player.MusicBrowser
 import io.github.artenes.ostatic.player.MusicPlayerService
 import kotlinx.android.synthetic.main.preload_list.view.*
 
 class HomeFragment : Fragment(), AlbumListAdapter.OnAlbumClickListener {
-
-    companion object {
-        private const val ALBUM_LIMIT_PER_CATEGORY = 7
-        private const val MORE_ALBUMS_COVER = "android.resource://io.github.artenes.ostatic/drawable/album"
-    }
 
     private lateinit var mediaBrowser: MediaBrowserCompat
 
@@ -72,7 +65,7 @@ class HomeFragment : Fragment(), AlbumListAdapter.OnAlbumClickListener {
 
         mediaBrowser.subscribe(
             mediaBrowser.root,
-            bundleOf(MusicBrowser.BUNDLE_KEY_LIMIT to ALBUM_LIMIT_PER_CATEGORY),
+            bundleOf(MusicBrowser.BUNDLE_KEY_LIMIT to ViewConstants.TOP_ALBUM_DEFAULT_LIMIT),
             object : MediaBrowserCompat.SubscriptionCallback() {
 
                 override fun onChildrenLoaded(
@@ -92,9 +85,9 @@ class HomeFragment : Fragment(), AlbumListAdapter.OnAlbumClickListener {
     override fun onAlbumClick(album: AlbumForShowcase) {
         //work around to use what exists already
         if (album.isCategory()) {
-            (requireActivity() as MainActivity).openAllAlbumsFromHome(album.id)
+            (requireActivity() as MainActivity).openAllAlbumsFromHome(album.uri)
         } else {
-            (requireActivity() as MainActivity).openAlbumFromHome(album.id)
+            (requireActivity() as MainActivity).openAlbumFromHome(album.uri)
         }
     }
 
@@ -105,7 +98,8 @@ class HomeFragment : Fragment(), AlbumListAdapter.OnAlbumClickListener {
             AlbumForShowcase(
                 it.mediaId as String,
                 it.description.title as String,
-                it.description.iconUri.toString()
+                it.description.iconUri.toString(),
+                it.description.mediaUri.toString()
             )
         }.toMutableList()
     }
@@ -115,8 +109,15 @@ class HomeFragment : Fragment(), AlbumListAdapter.OnAlbumClickListener {
     ): AlbumSection {
         val albumsFromCategory = albums.getCategory(category)
 
-        if (albumsFromCategory.size == ALBUM_LIMIT_PER_CATEGORY) {
-            albumsFromCategory.add(AlbumForShowcase(category, getString(R.string.all_albums), MORE_ALBUMS_COVER))
+        if (albumsFromCategory.size == ViewConstants.TOP_ALBUM_DEFAULT_LIMIT) {
+            albumsFromCategory.add(
+                AlbumForShowcase(
+                    category,
+                    getString(R.string.all_albums),
+                    ViewConstants.MORE_ALBUMS_COVER,
+                    Ostatic.makeAlbumPath(category)
+                )
+            )
         }
 
         return AlbumSection(title, subtitle, albumsFromCategory, false)

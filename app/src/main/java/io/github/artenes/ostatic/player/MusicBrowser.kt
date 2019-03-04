@@ -7,44 +7,36 @@ import android.support.v4.media.MediaDescriptionCompat
 import androidx.core.os.bundleOf
 import androidx.media.MediaBrowserServiceCompat
 import io.github.artenes.ostatic.db.ApplicationRepository
+import io.github.artenes.ostatic.model.Ostatic
 
 class MusicBrowser(private val repo: ApplicationRepository) {
 
     companion object {
-
-        const val OSTATIC_ROOT = "https://ostatic.io/"
-        const val OSTATIC_ALBUMS_LIST = "https://ostatic.io/albums/"
-        const val OSTATIC_FAVORITE_SONGS = "https://ostatic.io/favorites/"
-        const val OSTATIC_ALBUM = "https://ostatic.io/album/"
-        const val OSTATIC_SONG = "https://ostatic.io/song/"
-
+        private const val DEFAULT_ALBUMS_LIMIT = 10
         const val BUNDLE_KEY_LIMIT = "limit"
         const val BUNDLE_KEY_CATEGORY = "category"
-
-        const val TOP_ALBUM_DEFAULT_LIMIT = 7
-
     }
 
     fun getRoot(): MediaBrowserServiceCompat.BrowserRoot {
-        return MediaBrowserServiceCompat.BrowserRoot(OSTATIC_ROOT, null)
+        return MediaBrowserServiceCompat.BrowserRoot(Ostatic.ROOT, null)
     }
 
     suspend fun getChild(parentId: String, bundle: Bundle): MutableList<MediaBrowserCompat.MediaItem> {
         return when (parentId) {
-            OSTATIC_ROOT -> getRootMediaItems(bundle)
-            OSTATIC_ALBUMS_LIST -> mutableListOf()
-            OSTATIC_FAVORITE_SONGS -> mutableListOf()
-            OSTATIC_ALBUM -> mutableListOf()
-            OSTATIC_SONG -> mutableListOf()
+            Ostatic.ROOT -> getRootMediaItems(bundle)
+            Ostatic.ALBUMS_LIST -> mutableListOf()
+            Ostatic.FAVORITE_SONGS -> mutableListOf()
+            Ostatic.ALBUM -> mutableListOf()
+            Ostatic.SONG -> mutableListOf()
             else -> mutableListOf()
         }
     }
 
     private suspend fun getRootMediaItems(bundle: Bundle): MutableList<MediaBrowserCompat.MediaItem> {
         val limit =
-            if (bundle.containsKey(BUNDLE_KEY_LIMIT)) bundle.getInt(BUNDLE_KEY_LIMIT) else TOP_ALBUM_DEFAULT_LIMIT
+            if (bundle.containsKey(BUNDLE_KEY_LIMIT)) bundle.getInt(BUNDLE_KEY_LIMIT) else DEFAULT_ALBUMS_LIMIT
         return repo.getRecentAndTopAlbums(limit).map {
-            val albumUri = Uri.parse(OSTATIC_ALBUM).buildUpon().appendPath(it.id).build()
+            val albumUri = Uri.parse(Ostatic.makeAlbumPath(it.id))
             val iconUri = Uri.parse(it.cover)
 
             val mediaDescription =
