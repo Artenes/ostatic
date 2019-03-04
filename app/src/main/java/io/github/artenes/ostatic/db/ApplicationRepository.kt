@@ -4,64 +4,82 @@ import android.content.Context
 import android.util.Log
 import io.github.artenes.ostatic.api.JsoupHtmlDocumentReader
 import io.github.artenes.ostatic.api.KhinsiderRepository
-import io.github.artenes.ostatic.model.Album
-import io.github.artenes.ostatic.model.AlbumCategory
-import io.github.artenes.ostatic.model.AlbumWithCategory
-import io.github.artenes.ostatic.model.TopAlbums
+import io.github.artenes.ostatic.model.*
 import java.util.*
 
 class ApplicationRepository(context: Context) {
 
     companion object {
-
         const val TAG = "ApplicationRepository"
-
     }
 
     private val db: ApplicationDatabase = ApplicationDatabase.getInstance(context)
     private val khRepo: KhinsiderRepository = KhinsiderRepository(JsoupHtmlDocumentReader())
     private val mp3LinksCache: MutableMap<String, String> = mutableMapOf()
 
-    suspend fun getRecentAndTopAlbums(limit: Int): List<AlbumWithCategory> {
+    suspend fun getRecentAndTopAlbumsWithAllAlbumsOption(limit: Int): List<AlbumWithCategory> {
         val albums = mutableListOf<AlbumWithCategory>()
 
+        //in each of these blocks we fetch the collection of albums of a certain category
+        //and if the fetched amount is the same as the limit, we append a new album
+        //at the end to indicate the "more albums" item
         albums.addAll(getRecentAlbums(limit).map {
             AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumCategory.CATEGORY_RECENT)
+        }.toMutableList().also {
+            if (it.size == limit) {
+                it.add(AllAlbumsCategory(AlbumCategory.CATEGORY_RECENT))
+            }
         })
 
         albums.addAll(getTop40(limit).map {
             AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumCategory.CATEGORY_TOP_40)
+        }.toMutableList().also {
+            if (it.size == limit) {
+                it.add(AllAlbumsCategory(AlbumCategory.CATEGORY_TOP_40))
+            }
         })
 
         albums.addAll(getTop100AllTime(limit).map {
             AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumCategory.CATEGORY_TOP_ALL)
+        }.toMutableList().also {
+            if (it.size == limit) {
+                it.add(AllAlbumsCategory(AlbumCategory.CATEGORY_TOP_ALL))
+            }
         })
 
         albums.addAll(getTop100Last6Months(limit).map {
             AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumCategory.CATEGORY_TOP_6_MONTHS)
+        }.toMutableList().also {
+            if (it.size == limit) {
+                it.add(AllAlbumsCategory(AlbumCategory.CATEGORY_TOP_6_MONTHS))
+            }
         })
 
         albums.addAll(getTop100NewlyAdded(limit).map {
             AlbumWithCategory(it.id, it.name, it.cover ?: "", AlbumCategory.CATEGORY_TOP_NEWLY)
+        }.toMutableList().also {
+            if (it.size == limit) {
+                it.add(AllAlbumsCategory(AlbumCategory.CATEGORY_TOP_NEWLY))
+            }
         })
 
         return albums
     }
 
     suspend fun getTop40(limit: Int = 40): List<TopAlbumView> {
-        return getTopAlbum("top_40", TopAlbums.TOP_40, limit)
+        return getTopAlbum(AlbumCategory.CATEGORY_TOP_40, TopAlbums.TOP_40, limit)
     }
 
     suspend fun getTop100AllTime(limit: Int = 100): List<TopAlbumView> {
-        return getTopAlbum("top_all_time", TopAlbums.ALL_TIME, limit)
+        return getTopAlbum(AlbumCategory.CATEGORY_TOP_ALL, TopAlbums.ALL_TIME, limit)
     }
 
     suspend fun getTop100Last6Months(limit: Int = 100): List<TopAlbumView> {
-        return getTopAlbum("top_6_months", TopAlbums.LAST_SIX_MOTHS, limit)
+        return getTopAlbum(AlbumCategory.CATEGORY_TOP_6_MONTHS, TopAlbums.LAST_SIX_MOTHS, limit)
     }
 
     suspend fun getTop100NewlyAdded(limit: Int = 100): List<TopAlbumView> {
-        return getTopAlbum("top_newly_added", TopAlbums.NEWLY_ADDED, limit)
+        return getTopAlbum(AlbumCategory.CATEGORY_TOP_NEWLY, TopAlbums.NEWLY_ADDED, limit)
     }
 
     suspend fun getAlbum(id: String): AlbumView {
@@ -129,7 +147,7 @@ class ApplicationRepository(context: Context) {
     suspend fun markAsRecent(album: AlbumView) {
         val recentAlbum = db.albumDao().getTopAlbum(album.id, "top_recent")
         if (recentAlbum == null) {
-            db.albumDao().markAsRecent(TopAlbumEntity(album.id, album.name,album.cover ?: "","top_recent"))
+            db.albumDao().markAsRecent(TopAlbumEntity(album.id, album.name, album.cover ?: "", "top_recent"))
         } else {
             recentAlbum.updatedAt = Calendar.getInstance().timeInMillis
             db.albumDao().updateTopAlbum(recentAlbum)

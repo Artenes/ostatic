@@ -7,7 +7,15 @@ import android.support.v4.media.MediaDescriptionCompat
 import androidx.core.os.bundleOf
 import androidx.media.MediaBrowserServiceCompat
 import io.github.artenes.ostatic.db.ApplicationRepository
+import io.github.artenes.ostatic.model.AlbumCategory
 import io.github.artenes.ostatic.model.Ostatic
+
+/**
+ * Checks if the media item is used to represent a category
+ */
+fun MediaBrowserCompat.MediaItem.isACategory(): Boolean {
+    return AlbumCategory.isCategory(this.mediaId as String)
+}
 
 class MusicBrowser(private val repo: ApplicationRepository) {
 
@@ -35,7 +43,7 @@ class MusicBrowser(private val repo: ApplicationRepository) {
     private suspend fun getRootMediaItems(bundle: Bundle): MutableList<MediaBrowserCompat.MediaItem> {
         val limit =
             if (bundle.containsKey(BUNDLE_KEY_LIMIT)) bundle.getInt(BUNDLE_KEY_LIMIT) else DEFAULT_ALBUMS_LIMIT
-        return repo.getRecentAndTopAlbums(limit).map {
+        return repo.getRecentAndTopAlbumsWithAllAlbumsOption(limit).map {
             val albumUri = Uri.parse(Ostatic.makeAlbumPath(it.id))
             val iconUri = Uri.parse(it.cover)
 

@@ -1,6 +1,7 @@
 package io.github.artenes.ostatic.view
 
 import android.graphics.Rect
+import android.support.v4.media.MediaBrowserCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,12 +12,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import io.github.artenes.ostatic.R
-import io.github.artenes.ostatic.db.TopAlbumView
-import io.github.artenes.ostatic.model.AlbumForShowcase
-import io.github.artenes.ostatic.model.AlbumSection
+import io.github.artenes.ostatic.player.isACategory
 import kotlinx.android.synthetic.main.album_section.view.*
 
-class TopAlbumsAdapter(val listener: AlbumListAdapter.OnAlbumClickListener) : RecyclerView.Adapter<TopAlbumsAdapter.AlbumSectionViewHolder>() {
+class TopAlbumsAdapter(val listener: AlbumListAdapter.OnAlbumClickListener) :
+    RecyclerView.Adapter<TopAlbumsAdapter.AlbumSectionViewHolder>() {
 
     var sections: MutableList<AlbumSection> = mutableListOf()
 
@@ -81,16 +81,16 @@ class TopAlbumsAdapter(val listener: AlbumListAdapter.OnAlbumClickListener) : Re
 
 }
 
-class AlbumListAdapter(val listener: OnAlbumClickListener, val isHighlight: Boolean) :
+class AlbumListAdapter(val listener: OnAlbumClickListener, private val isHighlight: Boolean) :
     RecyclerView.Adapter<AlbumListAdapter.AlbumViewHolder>() {
 
     interface OnAlbumClickListener {
-        fun onAlbumClick(album: AlbumForShowcase)
+        fun onAlbumClick(album: MediaBrowserCompat.MediaItem)
     }
 
-    var albums: MutableList<AlbumForShowcase> = mutableListOf()
+    var albums: MutableList<MediaBrowserCompat.MediaItem> = mutableListOf()
 
-    fun setData(newAlbums: List<AlbumForShowcase>) {
+    fun setData(newAlbums: List<MediaBrowserCompat.MediaItem>) {
         albums.clear()
         albums.addAll(newAlbums)
         notifyDataSetChanged()
@@ -114,11 +114,11 @@ class AlbumListAdapter(val listener: OnAlbumClickListener, val isHighlight: Bool
 
     inner class AlbumViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
 
-        fun bind(album: AlbumForShowcase) {
-            itemView.findViewById<TextView>(R.id.itemTitle).text = album.name
+        fun bind(album: MediaBrowserCompat.MediaItem) {
+            itemView.findViewById<TextView>(R.id.itemTitle).text = getTitle(album)
             val cover = itemView.findViewById<ImageView>(R.id.itemAlbumCover)
             val albumUrl =
-                if (album.cover.isEmpty()) "android.resource://io.github.artenes.ostatic/drawable/album" else album.cover
+                if (album.description.iconUri?.toString()?.isEmpty() == true) ViewConstants.ALL_ALBUMS_COVER else album.description.iconUri.toString()
             Picasso.get()
                 .load(albumUrl)
                 .resize(280, 280)
@@ -132,6 +132,14 @@ class AlbumListAdapter(val listener: OnAlbumClickListener, val isHighlight: Bool
         override fun onClick(v: View?) {
             val album = albums[adapterPosition]
             listener.onAlbumClick(album)
+        }
+
+        private fun getTitle(item: MediaBrowserCompat.MediaItem): String {
+            return if (item.isACategory()) {
+                itemView.context.resources.getString(R.string.all_albums)
+            } else {
+                item.description.title as String
+            }
         }
 
     }

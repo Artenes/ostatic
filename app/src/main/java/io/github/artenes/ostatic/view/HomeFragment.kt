@@ -13,9 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.artenes.ostatic.MainActivity
 import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.R
-import io.github.artenes.ostatic.model.*
+import io.github.artenes.ostatic.model.AlbumCategory
 import io.github.artenes.ostatic.player.MusicBrowser
 import io.github.artenes.ostatic.player.MusicPlayerService
+import io.github.artenes.ostatic.player.isACategory
 import kotlinx.android.synthetic.main.preload_list.view.*
 
 class HomeFragment : Fragment(), AlbumListAdapter.OnAlbumClickListener {
@@ -82,96 +83,63 @@ class HomeFragment : Fragment(), AlbumListAdapter.OnAlbumClickListener {
 
     }
 
-    override fun onAlbumClick(album: AlbumForShowcase) {
-        //work around to use what exists already
-        if (album.isCategory()) {
-            (requireActivity() as MainActivity).openAllAlbumsFromHome(album.uri)
+    override fun onAlbumClick(album: MediaBrowserCompat.MediaItem) {
+        if (album.isACategory()) {
+            (requireActivity() as MainActivity).openAllAlbumsFromHome(album.description.mediaUri.toString())
         } else {
-            (requireActivity() as MainActivity).openAlbumFromHome(album.uri)
+            (requireActivity() as MainActivity).openAlbumFromHome(album.description.mediaUri.toString())
         }
     }
 
-    private fun MutableList<MediaBrowserCompat.MediaItem>.getCategory(category: String): MutableList<AlbumForShowcase> {
+    private fun MutableList<MediaBrowserCompat.MediaItem>.getOfCategory(category: String): MutableList<MediaBrowserCompat.MediaItem> {
         return this.filter {
             it.description.extras?.getString(MusicBrowser.BUNDLE_KEY_CATEGORY)?.equals(category) ?: false
-        }.map {
-            AlbumForShowcase(
-                it.mediaId as String,
-                it.description.title as String,
-                it.description.iconUri.toString(),
-                it.description.mediaUri.toString()
-            )
         }.toMutableList()
-    }
-
-    private fun createSection(
-        albums: MutableList<MediaBrowserCompat.MediaItem>, category: String, title: String, subtitle: String
-    ): AlbumSection {
-        val albumsFromCategory = albums.getCategory(category)
-
-        if (albumsFromCategory.size == ViewConstants.TOP_ALBUM_DEFAULT_LIMIT) {
-            albumsFromCategory.add(
-                AlbumForShowcase(
-                    category,
-                    getString(R.string.all_albums),
-                    ViewConstants.MORE_ALBUMS_COVER,
-                    Ostatic.makeAlbumPath(category)
-                )
-            )
-        }
-
-        return AlbumSection(title, subtitle, albumsFromCategory, false)
     }
 
     private fun makeListOfSections(albums: MutableList<MediaBrowserCompat.MediaItem>): List<AlbumSection> {
         val sections = mutableListOf<AlbumSection>()
 
-        createSection(
-            albums,
+        val categoriesToDisplay = listOf(
             AlbumCategory.CATEGORY_RECENT,
-            getString(R.string.top_recent_soundtracks),
-            getString(R.string.top_recent_soundtracks_subtitle)
-        ).takeIf { it.albums.isNotEmpty() }?.apply {
-            sections.add(this)
-        }
-
-        createSection(
-            albums,
             AlbumCategory.CATEGORY_TOP_40,
-            getString(R.string.top_40_soundtracks),
-            getString(R.string.top_40_soundtracks_subtitle)
-        ).takeIf { it.albums.isNotEmpty() }?.apply {
-            sections.add(this)
-        }
-
-        createSection(
-            albums,
             AlbumCategory.CATEGORY_TOP_NEWLY,
-            getString(R.string.top_newly_soundtracks),
-            getString(R.string.top_newly_soundtracks_subtitle)
-        ).takeIf { it.albums.isNotEmpty() }?.apply {
-            sections.add(this)
-        }
-
-        createSection(
-            albums,
             AlbumCategory.CATEGORY_TOP_6_MONTHS,
-            getString(R.string.top_months_soundtracks),
-            getString(R.string.top_months_soundtracks_subtitle)
-        ).takeIf { it.albums.isNotEmpty() }?.apply {
-            sections.add(this)
-        }
+            AlbumCategory.CATEGORY_TOP_ALL
+        )
 
-        createSection(
-            albums,
-            AlbumCategory.CATEGORY_TOP_ALL,
-            getString(R.string.top_all_soundtracks),
-            getString(R.string.top_all_soundtracks_subtitle)
-        ).takeIf { it.albums.isNotEmpty() }?.apply {
-            sections.add(this)
+        categoriesToDisplay.forEach { category ->
+            AlbumSection(
+                getSectionTitle(category),
+                getSectionSubtitle(category),
+                albums.getOfCategory(category),
+                category
+            ).takeIf { it.albums.isNotEmpty() }?.apply { sections.add(this) }
         }
 
         return sections
+    }
+
+    private fun getSectionTitle(category: String): String {
+        return when (category) {
+            AlbumCategory.CATEGORY_RECENT -> getString(R.string.top_recent_soundtracks)
+            AlbumCategory.CATEGORY_TOP_40 -> getString(R.string.top_40_soundtracks)
+            AlbumCategory.CATEGORY_TOP_6_MONTHS -> getString(R.string.top_months_soundtracks)
+            AlbumCategory.CATEGORY_TOP_NEWLY -> getString(R.string.top_newly_soundtracks)
+            AlbumCategory.CATEGORY_TOP_ALL -> getString(R.string.top_all_soundtracks)
+            else -> ""
+        }
+    }
+
+    private fun getSectionSubtitle(category: String): String {
+        return when (category) {
+            AlbumCategory.CATEGORY_RECENT -> getString(R.string.top_recent_soundtracks_subtitle)
+            AlbumCategory.CATEGORY_TOP_40 -> getString(R.string.top_40_soundtracks_subtitle)
+            AlbumCategory.CATEGORY_TOP_6_MONTHS -> getString(R.string.top_months_soundtracks_subtitle)
+            AlbumCategory.CATEGORY_TOP_NEWLY -> getString(R.string.top_newly_soundtracks_subtitle)
+            AlbumCategory.CATEGORY_TOP_ALL -> getString(R.string.top_all_soundtracks_subtitle)
+            else -> ""
+        }
     }
 
     private val connectionCallbacks = object : MediaBrowserCompat.ConnectionCallback() {
