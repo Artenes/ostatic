@@ -1,4 +1,4 @@
-package io.github.artenes.ostatic.model;
+package io.github.artenes.ostatic.api.model;
 
 /**
  * A file that contains an url to be downloaded

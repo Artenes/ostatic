@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import io.github.artenes.ostatic.api.JsoupHtmlDocumentReader
 import io.github.artenes.ostatic.api.KhinsiderRepository
+import io.github.artenes.ostatic.api.model.Album
+import io.github.artenes.ostatic.api.model.TopAlbums
 import io.github.artenes.ostatic.model.*
 import java.util.*
 

@@ -1,9 +1,9 @@
 package io.github.artenes.ostatic.api;
 
-import io.github.artenes.ostatic.model.Album;
-import io.github.artenes.ostatic.model.FileInfo;
-import io.github.artenes.ostatic.model.Format;
-import io.github.artenes.ostatic.model.Song;
+import io.github.artenes.ostatic.api.model.Album;
+import io.github.artenes.ostatic.api.model.FileInfo;
+import io.github.artenes.ostatic.api.model.Format;
+import io.github.artenes.ostatic.api.model.Song;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;

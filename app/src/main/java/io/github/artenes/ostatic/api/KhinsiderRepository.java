@@ -1,6 +1,6 @@
 package io.github.artenes.ostatic.api;
 
-import io.github.artenes.ostatic.model.*;
+import io.github.artenes.ostatic.api.model.*;
 
 import org.jsoup.nodes.Document;
 

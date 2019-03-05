@@ -1,6 +1,6 @@
 package io.github.artenes.ostatic.api;
 
-import io.github.artenes.ostatic.model.*;
+import io.github.artenes.ostatic.api.model.Song;
 
 /**
  * Class with constants and utility methods to deal

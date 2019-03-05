@@ -1,4 +1,4 @@
-package io.github.artenes.ostatic.model;
+package io.github.artenes.ostatic.api.model;
 
 /**
  * The letters that can be used to paginate between the list of songs

@@ -1,4 +1,4 @@
-package io.github.artenes.ostatic.model;
+package io.github.artenes.ostatic.api.model;
 
 /**
  * Title and id of an album, only to display in search results

@@ -1,6 +1,6 @@
 package io.github.artenes.ostatic.api;
 
-import io.github.artenes.ostatic.model.ResumedAlbum;
+import io.github.artenes.ostatic.api.model.ResumedAlbum;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
