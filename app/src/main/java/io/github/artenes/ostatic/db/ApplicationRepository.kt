@@ -154,6 +154,7 @@ class ApplicationRepository(context: Context) {
         if (url.isNullOrEmpty()) {
             Log.d(TAG, "Fetching song $songId from KHInsider")
             url = khRepo.getMp3LinkForSong(songId)
+            Log.d(TAG, "MP3 url for song $songId: $url")
             db.albumDao().updateSongMp3UrlNonSuspend(songId, url)
             Log.d(TAG, "Updated song $songId on database")
             mp3LinksCache[songId] = url
