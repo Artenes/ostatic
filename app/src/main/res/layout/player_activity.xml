@@ -152,4 +152,15 @@
                                                 android:orientation="horizontal"
                                                 app:layout_constraintGuide_percent="0.70"/>
 
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/warning_background"
+        android:text="@string/release_warning"
+        app:layout_constraintBottom_toBottomOf="@+id/albumTitle"
+        app:layout_constraintEnd_toEndOf="@+id/albumCover"
+        app:layout_constraintStart_toStartOf="@+id/albumCover"
+        app:layout_constraintTop_toTopOf="@+id/albumCover" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -50,4 +50,6 @@
     <string name="downloading_song">Downloading %s</string>
     <string name="downloading_in_progress">Downloading in progress</string>
 
+    <string name="release_warning">Playing sample music due to copyright \n\n <b>Watch your back</b> \n <small>by Jeremy Black</small></string>
+
 </resources>
