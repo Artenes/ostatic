@@ -6,14 +6,21 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
+import com.google.android.exoplayer2.upstream.AssetDataSource
+import com.google.android.exoplayer2.upstream.AssetDataSource.AssetDataSourceException
+import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
+import io.github.artenes.ostatic.BuildConfig
 import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.db.AlbumView
 import io.github.artenes.ostatic.db.SongView
+
 
 data class MusicPlayerState(
     val isPlaying: Boolean,
@@ -182,7 +189,7 @@ class MusicSession(playList: List<SongView>, currentIndex: Int, private val play
 
 }
 
-class MusicPlayer(context: Context, userAgent: String) {
+class MusicPlayer(val context: Context, userAgent: String) {
 
     private val player: SimpleExoPlayer = ExoPlayerFactory.newSimpleInstance(context)
     private val sourceFactory: DefaultHttpDataSourceFactory = DefaultHttpDataSourceFactory(userAgent)
@@ -199,15 +206,12 @@ class MusicPlayer(context: Context, userAgent: String) {
     fun prepare(playList: List<SongView>, currentIndex: Int) {
         val mediaSources = ConcatenatingMediaSource()
         for (song in playList) {
-            val uri = if (song.url.isEmpty()) UrlUpdatingDataSource.makeNoSongUri(song.id) else Uri.parse(song.url)
-            mediaSources.addMediaSource(
-                ExtractorMediaSource.Factory(
-                    UrlUpdatingDataSource.Factory(
-                        sourceFactory,
-                        OstaticApplication.REPOSITORY
-                    )
-                ).createMediaSource(uri)
-            )
+            val source = if (BuildConfig.FLAVOR == "playstore") {
+                createMockMediaSource(context, Uri.parse("asset:///watch_your_back_jeremy_black.mp3"))
+            } else {
+                createUrlMediaSource(song)
+            }
+            mediaSources.addMediaSource(source)
         }
         player.prepare(mediaSources)
         player.seekTo(currentIndex, 0)
@@ -289,6 +293,31 @@ class MusicPlayer(context: Context, userAgent: String) {
 
     fun release() {
         player.release()
+    }
+
+    private fun createUrlMediaSource(song: SongView): ExtractorMediaSource {
+        val uri = if (song.url.isEmpty()) UrlUpdatingDataSource.makeNoSongUri(song.id) else Uri.parse(song.url)
+        val factory = UrlUpdatingDataSource.Factory(sourceFactory, OstaticApplication.REPOSITORY)
+        return ExtractorMediaSource.Factory(factory).createMediaSource(uri)
+    }
+
+    private fun createMockMediaSource(context: Context, uri: Uri): ExtractorMediaSource {
+        val dataSpec = DataSpec(uri)
+        val assetDataSource = AssetDataSource(context)
+
+        try {
+            assetDataSource.open(dataSpec)
+        } catch (e: AssetDataSourceException) {
+            e.printStackTrace()
+        }
+
+        val factory: DataSource.Factory = DataSource.Factory {
+            assetDataSource
+        }
+
+        return ExtractorMediaSource.Factory(factory)
+            .setExtractorsFactory(DefaultExtractorsFactory())
+            .createMediaSource(assetDataSource.uri)
     }
 
 }

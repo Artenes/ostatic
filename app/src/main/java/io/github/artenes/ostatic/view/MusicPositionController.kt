@@ -1,5 +1,6 @@
 package io.github.artenes.ostatic.view
 
+import android.annotation.SuppressLint
 import android.os.Handler
 import android.widget.SeekBar
 import android.widget.TextView
@@ -12,6 +13,7 @@ import io.github.artenes.ostatic.service.MusicSession
 class MusicPositionController(
     private val seekBar: SeekBar,
     private val currentTime: TextView,
+    private val endTime: TextView,
     private val session: MusicSession
 ) : SeekBar.OnSeekBarChangeListener {
 
@@ -28,8 +30,13 @@ class MusicPositionController(
      * this method should be called
      * to refresh the view's state
      */
+    @SuppressLint("SetTextI18n")
     fun playMusic() {
-        seekBar.max = session.getDuration().toInt()
+        val duration = session.getDuration()
+        val minutes = (duration / 1000 / 60 % 60).toString().padStart(2,'0')
+        val seconds = (duration / 1000 % 60).toString().padStart(2, '0')
+        endTime.text = "$minutes:$seconds"
+        seekBar.max = duration.toInt()
         startPollingPlayerPosition()
     }
 

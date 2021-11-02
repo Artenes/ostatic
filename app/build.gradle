@@ -17,6 +17,19 @@ android {
         archivesBaseName = "Ostatic-v$versionName"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    flavorDimensions "base"
+    productFlavors {
+        full {
+            dimension "base"
+            applicationIdSuffix ".full"
+            versionNameSuffix "-full"
+        }
+        playstore {
+            dimension "base"
+            applicationIdSuffix ".playstore"
+            versionNameSuffix "-playstore"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false

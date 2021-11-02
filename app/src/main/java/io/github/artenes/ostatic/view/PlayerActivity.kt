@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.google.android.exoplayer2.Player
 import com.squareup.picasso.Picasso
+import io.github.artenes.ostatic.BuildConfig
 import io.github.artenes.ostatic.OstaticApplication
 import io.github.artenes.ostatic.R
 import io.github.artenes.ostatic.loadAlbumCover
@@ -55,6 +56,12 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
         albumTitle.text = song.albumName
         songEndTime.text = song.time.padStart(5, '0')
         playPause.setImageResource(if (state.isPlaying) R.drawable.ic_pause else R.drawable.ic_play)
+
+        download.visibility = if (BuildConfig.FLAVOR == "playstore") {
+             View.GONE
+        } else {
+            View.VISIBLE
+        }
 
         if (state.isBuffering) {
             bufferingSong.visibility = View.VISIBLE
@@ -165,7 +172,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, View.OnClickListe
         this.service = (service as MusicPlayerService.MusicPlayerBinder).service
         val session = this.service.getSession() as MusicSession
         //this has to go before the listener below, otherwise the property will not be initialized before call
-        musicPositionController = MusicPositionController(seekBar, currentTime, session)
+        musicPositionController = MusicPositionController(seekBar, currentTime, songEndTime, session)
         session.addListener(playerListener)
     }
 
