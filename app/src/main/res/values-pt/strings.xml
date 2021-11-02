@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="home">Início</string>
+    <string name="search">Pesquisar</string>
+    <string name="library">Biblioteca</string>
+    <string name="about">Sobre</string>
+
+    <string name="search_by_game_title">Pesquisar por nome do jogo</string>
+    <string name="find_your_favorite_games_here">Ache seus jogos favoritos aqui</string>
+    <string name="no_games_found">Nenhum jogo encontrado</string>
+
+    <string name="top_40_soundtracks">Top 40</string>
+    <string name="top_40_soundtracks_subtitle">Top 40 desta semana</string>
+
+    <string name="top_newly_soundtracks">Top 100 novas músicas</string>
+    <string name="top_newly_soundtracks_subtitle">Novidades de nossos usuários</string>
+
+    <string name="top_months_soundtracks">Top 100 últimos 6 meses</string>
+    <string name="top_months_soundtracks_subtitle">Mais popular dos últimos 6 meses</string>
+
+    <string name="top_all_soundtracks">Top 100 de todos os tempos</string>
+    <string name="top_all_soundtracks_subtitle">Melhores músicas de todos os tempos</string>
+
+    <string name="top_recent_soundtracks">Músicas recentes</string>
+    <string name="top_recent_soundtracks_subtitle">músicas que você estava ouvindo</string>
+
+    <string name="all_albums">Todos os álbums</string>
+
+    <string name="number_songs">%d músicas</string>
+
+    <string name="play">Tocar</string>
+    <string name="pause">Parar</string>
+
+    <string name="notification_player_channel_name">Player</string>
+    <string name="notification_player_channel_description">Controles de música para tocar ou parar a música que está tocando</string>
+
+    <string name="song_album_name">%s &#9702; %s</string>
+
+    <string name="my_albums">Meus álbuns</string>
+    <string name="my_songs">Minhas músicas</string>
+
+    <string name="no_favorite_albums_yet">Nenhum álbum favorito!</string>
+    <string name="no_favorite_songs_yet">Nenhum música favorita!</string>
+
+    <string name="loading_top_albums">carregando melhores álbuns…</string>
+
+    <string name="start_time">00:00</string>
+
+    <string name="downloading_song">Baixando %s</string>
+    <string name="downloading_in_progress">Download em andamento</string>
+
+    <string name="release_warning">Tocando música genérica por causa de copyright \n\n <b>Watch your back</b> \n <small>por Jeremy Black</small></string>
+
+</resources>

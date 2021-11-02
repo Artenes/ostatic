@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Ostatic</string>
+    <string name="app_name" translatable="false">Ostatic</string>
 
     <string name="home">Home</string>
     <string name="search">Search</string>
