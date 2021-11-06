@@ -15,6 +15,10 @@
 	<img src="screenshots/ostaticscreen05.png" width="300">
 </p>
 
+# Video demo
+
+[Watch demo on youtube](https://youtu.be/Ea-Y0MTgVU0)
+
 # Download
 
 Got to [Release pages](https://github.com/Artenes/ostatic/releases) to get the latest version
